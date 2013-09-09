@@ -1,7 +1,12 @@
 package fractals;
 
+import graphics.GraphicalInterface;
+
 import java.awt.Color;
 import java.awt.Graphics;
+
+import de.congrace.exp4j.UnknownFunctionException;
+import de.congrace.exp4j.UnparsableExpressionException;
 
 public class AttractorFractal implements Fractal
 {
@@ -14,15 +19,15 @@ public class AttractorFractal implements Fractal
 	}
 
 	@Override
-	public void paintFractal(Graphics g) 
+	public void paintFractal(Graphics g) throws UnknownFunctionException, UnparsableExpressionException 
 	{
 		double x,y;
 		
-		g.setColor(Color.white);
+		g.setColor(new Color(255,255,255,60));
 		
-		x = y = 100.0;
+		x = y = 0.0;
 		
-		for(int i=0; i<1000; i++)
+		for(int i=0; i<500000; i++)
 		{
 			double newX = expressionX.evaluate(x, y);
 			double newY = expressionY.evaluate(x, y);
@@ -30,10 +35,13 @@ public class AttractorFractal implements Fractal
 			x = newX;
 			y = newY;
 			
-			int roundX = (int) Math.round(x);
-			int roundY = (int) Math.round(y);
+			int roundX = (int) Math.round(x * 200 + GraphicalInterface.frame.getWidth()/2);
+			int roundY = (int) Math.round(y * 200 + GraphicalInterface.frame.getHeight()/2);
 			
 			g.drawLine(roundX, roundY, roundX, roundY);
+			
+			if(i%1000==0)
+				System.out.print(".");
 		}
 	}
 

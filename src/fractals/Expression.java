@@ -1,32 +1,28 @@
 package fractals;
 
-import java.util.Stack;
+import de.congrace.exp4j.Calculable;
+import de.congrace.exp4j.ExpressionBuilder;
+import de.congrace.exp4j.UnknownFunctionException;
+import de.congrace.exp4j.UnparsableExpressionException;
 
 public class Expression 
 {
-	String postfixExpression;
+	String infixExpression;
 	
 	public Expression(String infixExpression)
 	{
-		postfixExpression = posterizeInfixExpression(infixExpression);
+		this.infixExpression = infixExpression;
 	}
 	
-	private String posterizeInfixExpression(String infixExpression) 
+	public double evaluate(double x, double y) throws UnknownFunctionException, UnparsableExpressionException
 	{
-		infixExpression = infixExpression.replaceAll(" ", "");
+		Calculable calc = new ExpressionBuilder(infixExpression)
+        .withVariable("x", x)
+        .withVariable("y", y)
+        .build();
 		
-		Stack<String> postfixStack = new Stack<String>();
-		
-		for(int i = 0; i < infixExpression.length(); i++)
-		{
-			
-		}
-		
-		return null;
-	}
+		double result = calc.calculate();
 
-	public int evaluate(double x, double y)
-	{
-		return 0;
+		return result;
 	}
 }
