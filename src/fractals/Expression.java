@@ -1,5 +1,8 @@
 package fractals;
 
+import java.awt.Point;
+import java.util.HashMap;
+
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import de.congrace.exp4j.UnknownFunctionException;
@@ -16,13 +19,14 @@ public class Expression
 	
 	public double evaluate(double x, double y) throws UnknownFunctionException, UnparsableExpressionException
 	{
+		
 		Calculable calc = new ExpressionBuilder(infixExpression)
         .withVariable("x", x)
         .withVariable("y", y)
         .build();
 		
 		double result = calc.calculate();
-
+		
 		return result;
 	}
 }

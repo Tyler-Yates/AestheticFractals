@@ -4,6 +4,9 @@ import graphics.GraphicalInterface;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import de.congrace.exp4j.UnknownFunctionException;
 import de.congrace.exp4j.UnparsableExpressionException;
@@ -11,6 +14,8 @@ import de.congrace.exp4j.UnparsableExpressionException;
 public class AttractorFractal implements Fractal
 {
 	private Expression expressionX, expressionY;
+	
+	private static final int ALPHA = 60;
 	
 	public AttractorFractal(Expression expressionX, Expression expressionY)
 	{
@@ -23,7 +28,9 @@ public class AttractorFractal implements Fractal
 	{
 		double x,y;
 		
-		g.setColor(new Color(255,255,255,60));
+		g.setColor(new Color(255,255,255,ALPHA));
+		
+		HashMap<Point, Integer> points = new HashMap<Point, Integer>();
 		
 		x = y = 0.0;
 		
@@ -38,10 +45,28 @@ public class AttractorFractal implements Fractal
 			int roundX = (int) Math.round(x * 200 + GraphicalInterface.frame.getWidth()/2);
 			int roundY = (int) Math.round(y * 200 + GraphicalInterface.frame.getHeight()/2);
 			
-			g.drawLine(roundX, roundY, roundX, roundY);
+			Point newPoint = new Point(roundX, roundY);
 			
-			if(i%1000==0)
-				System.out.print(".");
+			if(points.containsKey(newPoint))
+			{
+				if(points.get(newPoint)<255)
+				{
+					int newAlpha = Math.min(255, points.get(newPoint)+ALPHA);
+					points.put(newPoint, newAlpha);
+				}
+			}
+			else
+			{
+				points.put(newPoint, ALPHA);
+			}
+			
+			//g.drawLine(roundX, roundY, roundX, roundY);
+		}
+		
+		for(Point p:points.keySet())
+		{
+			g.setColor(new Color(255,255,255,points.get(p)));
+			g.drawLine(p.x, p.y, p.x, p.y);
 		}
 	}
 
