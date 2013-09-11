@@ -15,7 +15,7 @@ public class AttractorFractal implements Fractal
 {
 	private Expression expressionX, expressionY;
 	
-	private static final int ALPHA = 60;
+	private static final int ALPHA = 2;
 	
 	public AttractorFractal(Expression expressionX, Expression expressionY)
 	{
@@ -28,13 +28,11 @@ public class AttractorFractal implements Fractal
 	{
 		double x,y;
 		
-		g.setColor(new Color(255,255,255,ALPHA));
-		
 		HashMap<Point, Integer> points = new HashMap<Point, Integer>();
 		
 		x = y = 0.0;
 		
-		for(int i=0; i<500000; i++)
+		for(int i=0; i<5000000; i++)
 		{
 			double newX = expressionX.evaluate(x, y);
 			double newY = expressionY.evaluate(x, y);
@@ -65,7 +63,7 @@ public class AttractorFractal implements Fractal
 		
 		for(Point p:points.keySet())
 		{
-			g.setColor(new Color(255,255,255,points.get(p)));
+			g.setColor(new Color(0,0,0,points.get(p)));
 			g.drawLine(p.x, p.y, p.x, p.y);
 		}
 	}

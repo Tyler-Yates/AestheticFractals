@@ -68,15 +68,35 @@ public class Expression
 	
 	public double evaluate(double x, double y) throws UnknownFunctionException, UnparsableExpressionException
 	{
-		return 1.0;
-		/*Calculable calc = new ExpressionBuilder(infixExpression)
-        .withVariable("x", x)
-        .withVariable("y", y)
-        .build();
+		return evaluateParseTree(root, x, y);
+	}
+	
+	public double evaluateParseTree(Node current, double x, double y)
+	{
+		if(current==null)
+			return -1.0;
 		
-		double result = calc.calculate();
+		if(current.isLeaf())
+		{
+			if(current.getValue().equals("x"))
+				return x;
+			if(current.getValue().equals("y"))
+				return y;
+			return Double.parseDouble(current.getValue());
+		}
 		
-		return result;*/
+		switch(current.getValue())
+		{
+			case "+": return evaluateParseTree(current.getLeft(), x, y) + evaluateParseTree(current.getRight(), x, y);
+			case "-": return evaluateParseTree(current.getLeft(), x, y) - evaluateParseTree(current.getRight(), x, y);
+			case "*": return evaluateParseTree(current.getLeft(), x, y) * evaluateParseTree(current.getRight(), x, y);
+			case "/": return evaluateParseTree(current.getLeft(), x, y) / evaluateParseTree(current.getRight(), x, y);
+			case "^": return Math.pow(evaluateParseTree(current.getLeft(), x, y), evaluateParseTree(current.getRight(), x, y));
+			case "sin": return Math.sin(evaluateParseTree(current.getRight(), x, y));
+			case "cos": return Math.cos(evaluateParseTree(current.getRight(), x, y));
+			case "tan": return Math.tan(evaluateParseTree(current.getRight(), x, y));
+			default: return 0.0;
+		}
 	}
 }
 

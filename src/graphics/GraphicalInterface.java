@@ -42,7 +42,7 @@ public class GraphicalInterface extends JPanel
 	public void paint(Graphics g)
 	{
 		//Draw the background
-		g.setColor(Color.black);
+		g.setColor(Color.white);
 		g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 		
 		try {
