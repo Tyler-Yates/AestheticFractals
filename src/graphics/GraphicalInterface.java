@@ -28,7 +28,7 @@ public class GraphicalInterface extends JPanel
 		frame = new JFrame("Aesthetic Fractal v"+VERSION);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1024, 768);
+		frame.setSize(1900, 1060);
 		frame.add(this);
 	}
 	
@@ -37,23 +37,37 @@ public class GraphicalInterface extends JPanel
 		new GraphicalInterface();
 		
 		fractal = new AttractorFractal(new Expression("sin(1.7 * y) + cos(1.7* x)"), new Expression("sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
+		try {
+			fractal.calculate();
+		} catch (UnknownFunctionException | UnparsableExpressionException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void drawBoxes(Graphics g) {
+		g.setColor(Color.black);
+		g.drawRect(0, 0, frame.getWidth(), frame.getHeight());
+		g.drawLine(frame.getWidth()/3, 0, frame.getWidth()/3, frame.getHeight());
+		g.drawLine(frame.getWidth()/3*2, 0, frame.getWidth()/3*2, frame.getHeight());
+		
+		g.drawLine(0, frame.getHeight()/3, frame.getWidth(), frame.getHeight()/3);
+		g.drawLine(0, frame.getHeight()*2/3, frame.getWidth(), frame.getHeight()*2/3);
 	}
 	
 	public void paint(Graphics g)
 	{
+		if(fractal == null || !fractal.isCalculated()) {
+			repaint();
+			return;
+		}
+		
 		//Draw the background
 		g.setColor(Color.white);
 		g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 		
-		try {
-			fractal.paintFractal(g);
-		} catch (UnknownFunctionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnparsableExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fractal.paintFractal(g, 0, frame.getWidth()/3, 0, frame.getHeight()/3);
+		
+		drawBoxes(g);
 		
 		//repaint();
 	}
