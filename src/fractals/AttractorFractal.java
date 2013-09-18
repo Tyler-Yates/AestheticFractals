@@ -15,7 +15,7 @@ public class AttractorFractal implements Fractal
 	private Expression expressionX, expressionY;
 	
 	//The opacity of the color
-	private static final int ALPHA = 20;
+	private static final int ALPHA = 2;
 	
 	//Scale of the drawing
 	private static final int SCALE = 100;
@@ -45,7 +45,7 @@ public class AttractorFractal implements Fractal
 		x = y = 0.0;
 		
 		//Perform iterations to draw the fractal
-		for(int i=0; i<500000; i++)
+		for(int i=0; i<5000000; i++)
 		{
 			double newX = expressionX.evaluate(x, y);
 			double newY = expressionY.evaluate(x, y);
@@ -76,7 +76,7 @@ public class AttractorFractal implements Fractal
 			}
 			
 		}
-		System.out.println("minX = " + minX);
+
 		isCalculated = true;
 	}
 	

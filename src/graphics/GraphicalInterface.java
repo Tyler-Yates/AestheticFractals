@@ -9,14 +9,18 @@ import fractals.Expression;
 import fractals.Fractal;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
-public class GraphicalInterface extends JPanel
+public class GraphicalInterface extends JPanel implements MouseMotionListener
 {
 	private static final long serialVersionUID = 749344840243728058L;
 
 	public static JFrame frame;
 	
 	static Fractal fractal;
+	
+	static int mouseX, mouseY;
 	
 	private static final double VERSION = 0.00;
 	
@@ -29,6 +33,7 @@ public class GraphicalInterface extends JPanel
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1900, 1060);
+		frame.addMouseMotionListener(this);
 		frame.add(this);
 	}
 	
@@ -54,6 +59,14 @@ public class GraphicalInterface extends JPanel
 		g.drawLine(0, frame.getHeight()*2/3, frame.getWidth(), frame.getHeight()*2/3);
 	}
 	
+	public void drawSelectedBox(Graphics g) {
+		int l = mouseX / (frame.getWidth()/3) * (frame.getWidth()/3);
+		int t = mouseY / (frame.getHeight()/3) * (frame.getHeight()/3);
+		
+		g.setColor(new Color(0,0,255,15));
+		g.fillRect(l+1, t+1, frame.getWidth()/3-2, frame.getHeight()/3-2);
+	}
+	
 	public void paint(Graphics g)
 	{
 		if(fractal == null || !fractal.isCalculated()) {
@@ -68,7 +81,22 @@ public class GraphicalInterface extends JPanel
 		fractal.paintFractal(g, 0, frame.getWidth()/3, 0, frame.getHeight()/3);
 		
 		drawBoxes(g);
+		drawSelectedBox(g);
 		
-		//repaint();
+		repaint();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		
+		mouseX = x - frame.getInsets().left;
+		mouseY = y - frame.getInsets().top;
 	}
 }
