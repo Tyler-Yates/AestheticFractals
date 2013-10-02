@@ -1,8 +1,6 @@
 package fractals;
 
-import java.awt.Point;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
@@ -15,6 +13,37 @@ public class Expression
 {
 	Node root;
 	
+	public static Expression rand() {
+		Node root = Node.randOperator();
+		work(root);
+		return new Expression(root);
+	}
+	
+	public static void work(Node current)
+	{
+		if(current.isOperator())
+		{
+			if(current.isBinaryOperator())
+			{
+				current.setLeft(Node.rand());
+				current.setRight(Node.rand());
+				work(current.getLeft());
+				work(current.getRight());
+			}
+			else
+			{
+				current.setRight(Node.rand());
+				work(current.getRight());
+			}
+		}
+	}
+	
+	public Expression(Node root)
+	{
+		this.root=root;
+		print();
+	}
+	
 	public Expression(String infixExpression)
 	{
 		try {
@@ -23,8 +52,8 @@ public class Expression
 			
 			String arr[] = postfixExpression.split(" ");
 			
+			// Convert postfix expression into mathematical expression tree
 			Stack<Node> stack = new Stack<Node>();
-			
 			for(int i=0; i<arr.length; i++)
 			{
 				Node n = new Node(arr[i]);
@@ -56,6 +85,10 @@ public class Expression
 		
 	}
 	
+	/**
+	 * Print infix expression
+	 * @param current
+	 */
 	public void printTree(Node current)
 	{
 		if(current==null)
@@ -64,6 +97,11 @@ public class Expression
 		printTree(current.getLeft());
 		System.out.print(current+" ");
 		printTree(current.getRight());
+	}
+	
+	public void print() {
+		printTree(root);
+		System.out.println();
 	}
 	
 	public double evaluate(double x, double y) throws UnknownFunctionException, UnparsableExpressionException
@@ -95,6 +133,7 @@ public class Expression
 			case "sin": return Math.sin(evaluateParseTree(current.getRight(), x, y));
 			case "cos": return Math.cos(evaluateParseTree(current.getRight(), x, y));
 			case "tan": return Math.tan(evaluateParseTree(current.getRight(), x, y));
+			case "abs": return Math.abs(evaluateParseTree(current.getRight(),x ,y));
 			default: return 0.0;
 		}
 	}
@@ -107,6 +146,49 @@ class Node
 	
 	private static final HashSet<String> unaryOperators = new HashSet<String>(Arrays.asList("sin", "cos", "tan", "abs"));
 	private static final HashSet<String> binaryOperators = new HashSet<String>(Arrays.asList("*", "+", "-", "/", "^"));
+	
+	static public Node rand() {
+		double r = Math.random();
+		
+		if (r < 0.33) {
+			String choices[] = new String[unaryOperators.size()];
+			unaryOperators.toArray(choices);
+			return new Node(choices[(int)(Math.random()*choices.length)]);
+		} else if (r < 0.66) {
+			String choices[] = new String[binaryOperators.size()];
+			binaryOperators.toArray(choices);
+			return new Node(choices[(int)(Math.random()*choices.length)]);
+		} else {
+			return randLeaf();
+		}
+	}
+	
+	static public Node randOperator()
+	{
+		double r = Math.random();
+		
+		if (r < 0.5) {
+			String choices[] = new String[unaryOperators.size()];
+			unaryOperators.toArray(choices);
+			return new Node(choices[(int)(Math.random()*choices.length)]);
+		} else{
+			String choices[] = new String[binaryOperators.size()];
+			binaryOperators.toArray(choices);
+			return new Node(choices[(int)(Math.random()*choices.length)]);
+		}
+	}
+	
+	static public Node randLeaf() {
+		double r = Math.random();
+		
+		if (r < 0.33) {
+			return new Node("x");
+		} else if (r < 0.66){
+			return new Node("y");
+		} else {
+			return new Node(""+(Math.random()*4-2));
+		}
+	}
 	
 	public Node(String value)
 	{

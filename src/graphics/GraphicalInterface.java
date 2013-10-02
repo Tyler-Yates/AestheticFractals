@@ -10,9 +10,14 @@ import fractals.Fractal;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class GraphicalInterface extends JPanel implements MouseMotionListener
+/**
+ * Opens JFrame with nine boxes.
+ *
+ */
+public class GraphicalInterface extends JPanel implements MouseMotionListener, MouseListener
 {
 	private static final long serialVersionUID = 749344840243728058L;
 
@@ -34,6 +39,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1900, 1060);
 		frame.addMouseMotionListener(this);
+		frame.addMouseListener(this);
 		frame.add(this);
 	}
 	
@@ -78,7 +84,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener
 		g.setColor(Color.white);
 		g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 		
-		fractal.paintFractal(g, 0, frame.getWidth()/3, 0, frame.getHeight()/3);
+		fractal.paintFractal(g, frame.getWidth()/3, frame.getWidth()*2/3, frame.getHeight()/3, frame.getHeight()*2/3);
 		
 		drawBoxes(g);
 		drawSelectedBox(g);
@@ -98,5 +104,40 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener
 		
 		mouseX = x - frame.getInsets().left;
 		mouseY = y - frame.getInsets().top;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		fractal = new AttractorFractal(Expression.rand(), Expression.rand());
+		try {
+			fractal.calculate();
+		} catch (UnknownFunctionException | UnparsableExpressionException ee) {
+			ee.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
