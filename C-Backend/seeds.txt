@@ -1,0 +1,16 @@
+0 to 3PI
+505036785
+
+-PI to 3PI
+RNG Seed: -1001198589
+ExpressionX: a y * sin c a x * cos * + 
+a = 2.69754
+b = -3.00126
+c = -1.24721
+d = 8.48627
+ExpressionY: b x * sin d b y * cos * + 
+a = 6.43488
+b = -1.84452
+c = 5.44992
+d = 4.35599
+
