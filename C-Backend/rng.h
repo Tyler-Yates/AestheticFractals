@@ -1,17 +1,13 @@
 #ifndef __RNG_H__
 #define __RNG_H__
 
-#include <iostream>
-#include <sstream>
 #include <algorithm>
-#include <iterator>
-#include <stack>
-#include <cmath>
 #include <fstream>
-
 #include <fcntl.h>
 
 using namespace std;
+
+#define PI 3.1415
 
 int rngPrepared = 0;
 mt19937 rng;
@@ -27,13 +23,19 @@ void initRNG() {
   rngPrepared = 1;
 }
 
-float gen_random_float()
+float gen_random_float(float min, float max)
 {
   if (!rngPrepared) {
     initRNG();
   }
+  
+  
+  float dist2 = (float)uint_rand(rng) / (float)RAND_MAX;
+  if (dist2 > 1)
+    dist2 -= 1;
 
-  return 2*3.1415 * uint_rand(rng) / RAND_MAX - 3.1415;
+  //  return 2*PI * uint_rand(rng) / RAND_MAX - PI;
+  return (max-min) * dist2 + min;
 }
 
 #endif

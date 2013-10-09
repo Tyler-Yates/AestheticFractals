@@ -24,14 +24,12 @@ class AttractorFractal {
 
     expressionX = new Expression(x, vector<string>(), vars);
     expressionY = new Expression(y, vector<string>(), vars);
-    minX = minY = INT_MAX;
-    maxX = maxY = INT_MIN;
+    clear();
     calculate();
   }
   
  AttractorFractal(Expression* ex, Expression* ey): expressionX(ex), expressionY(ey) {
-    minX = minY = INT_MAX;
-    maxX = maxY = INT_MIN;
+    clear();
     calculate();
   }
   
@@ -40,6 +38,7 @@ class AttractorFractal {
   int getNumPoints() { return points.size(); }
   void calculate();
   void paint();
+  void clear();
   
 };
 
@@ -52,8 +51,7 @@ class CliffordAttractor : public AttractorFractal {
     
     expressionX = new Expression(x, consts, vars);
     expressionY = new Expression(y, consts, vars);
-    minX = minY = INT_MAX;
-    maxX = maxY = INT_MIN;
+    clear();
     constructConstants();
     calculate();
   }

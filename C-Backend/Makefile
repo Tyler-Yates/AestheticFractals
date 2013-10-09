@@ -2,17 +2,17 @@
 # Aesthetic Fractals: Makefile
 
 CC = g++
-CFLAGS = -g -std=c++11
+CFLAGS = -g -std=c++11   # Use -std=c++0x for versions of gcc and g++ <4.7
 INCLUDE =
 LIBDIR =
-LIBS = -lglut -lGLU  -lm
+LIBS = -lglut -lGLU -lm -lGL
 
 ###########################################################
 # Options if compiling on Mac
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
 CC = g++
-CFLAGS = -D__MAC__ 
+CFLAGS = -D__MAC__ -std=c++11 -stdlib=libc++
 INCLUDE = 
 LIBDIR = -L/lusr/X11/lib
 LIBS = -framework OpenGL -framework GLUT

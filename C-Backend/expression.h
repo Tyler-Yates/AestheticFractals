@@ -76,6 +76,7 @@ class Expression {
   void printRPN();
   void printTree(Node *n);
   void printTreeRPN(Node *n);
+  void printConstants();
 
   void createTree(vector<string> tokens);
   double evaluate(vector<double> values);

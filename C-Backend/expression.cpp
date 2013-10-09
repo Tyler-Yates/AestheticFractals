@@ -88,8 +88,22 @@ double Expression::evalTree(Node *n, vector<double> values) {
   return 0.0;
 }
 
-void Expression::print() { printTree(root); cout << endl; }
-void Expression::printRPN() { printTreeRPN(root); cout << endl; }
+void Expression::printConstants() {
+  for (int i = 0; i < numConsts && i < constVals.size(); i++)  {
+    cout << consts[i] << " = " << constVals[i] << endl;    
+  }
+}
+
+void Expression::print() { 
+  printTree(root); 
+  cout << endl; 
+  printConstants();
+}
+void Expression::printRPN() {
+  printTreeRPN(root); 
+  cout << endl; 
+  printConstants();
+}
 
 void Expression::printTree(Node *n) {
   if (!n) return;
