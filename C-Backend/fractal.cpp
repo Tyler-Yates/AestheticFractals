@@ -41,6 +41,8 @@ void AttractorFractal::calculate() {
     points.push_back(p);
   }
 
+  bb.min = Vec3f::makeVec(minX, minY, 0);
+  bb.max = Vec3f::makeVec(maxX, maxY, 0);
   isCalculated = true;
 }
 

@@ -15,10 +15,6 @@
 
 #pragma hdrstop
 
-int window_width=600;
-int window_height=600; 
-int windowID;
-
 GLfloat minX = -2.2f, maxX = 0.8f, minY = -1.5f, maxY = 1.5; // complex plane boundaries                  
 //GLfloat stepX = (maxX - minX)/(GLfloat)window_width;
 //GLfloat stepY = (maxY - minY)/(GLfloat)window_height;

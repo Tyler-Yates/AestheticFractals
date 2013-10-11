@@ -2,10 +2,17 @@
 # Aesthetic Fractals: Makefile
 
 CC = g++
+<<<<<<< HEAD:C-Backend/Makefile
 CFLAGS = -g -std=c++11   # Use -std=c++0x for versions of gcc and g++ <4.7
 INCLUDE =
 LIBDIR =
+LIBS = -lglut -lGLU -lm
+=======
+CFLAGS = -g -std=c++0x   # Use -std=c++0x for versions of gcc and g++ <4.7
+INCLUDE =
+LIBDIR =
 LIBS = -lglut -lGLU -lm -lGL
+>>>>>>> f574cd2e2650d0ee92de65579803d7efce6d4f43:C-Backend/Makefile
 
 ###########################################################
 # Options if compiling on Mac

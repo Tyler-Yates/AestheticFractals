@@ -35,6 +35,7 @@ class AttractorFractal {
   }
 
   BoundingBox getbb() { return bb; }
+  Vec4d getBounds() { return Vec4d{minX, maxX, minY, maxY }; }
   bool isReady() { return isCalculated; } 
   int getNumPoints() { return points.size(); }
   void calculate();
