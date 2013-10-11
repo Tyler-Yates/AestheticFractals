@@ -2,7 +2,7 @@
 # Aesthetic Fractals: Makefile
 
 CC = g++
-CFLAGS = -g -std=c++11   # Use -std=c++0x for versions of gcc and g++ <4.7
+CFLAGS = -g -std=c++0x   # Use -std=c++0x for versions of gcc and g++ <4.7
 INCLUDE =
 LIBDIR =
 LIBS = -lglut -lGLU -lm -lGL

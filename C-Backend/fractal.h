@@ -5,7 +5,7 @@
 
 #include "expression.h"
 #include "vec.h"
-
+#include "bb.h"
 
 class AttractorFractal {
  protected:
@@ -13,6 +13,7 @@ class AttractorFractal {
   Expression *expressionY;
 
   double minX, minY, maxX, maxY;  
+  BoundingBox bb;
   bool isCalculated;
   vector<Vec3f> points;
 
@@ -32,7 +33,8 @@ class AttractorFractal {
     clear();
     calculate();
   }
-  
+
+  BoundingBox getbb() { return bb; }
   Vec4d getBounds() { return Vec4d{minX, maxX, minY, maxY }; }
   bool isReady() { return isCalculated; } 
   int getNumPoints() { return points.size(); }
