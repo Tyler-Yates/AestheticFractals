@@ -6,6 +6,23 @@
 
 using namespace std;
 
+int window_width=600, window_height=600;
+float window_aspect = window_width / static_cast<float>(window_height);
+float zoom = 1;
+int windowID;
+
+float mouse_x, mouse_y;
+float arcmouse_x, arcmouse_y, arcmouse_z;
+
+bool right_mouse_button= false;
+bool left_mouse_button = false;
+
+GLfloat rot_matrix[16] = {1, 0, 0, 0,
+                          0, 1, 0, 0,
+                          0, 0, 1, 0,
+                          0, 0, 0, 1};
+
+
 vector<CliffordAttractor> fractals;
 //vector<AttractorFractal> fractals;
 
@@ -44,12 +61,13 @@ void Repaint() {
     //    for (int i = 0; i <= size / 2; i++) {
       //      for (int j = 0; j < (size+1) / 2; j++) {
         //        glViewport(j*window_width/((size+1)/2),i*window_height/(size), window_width/((size+1)/2), window_height/(size));
-    // glOrtho(stuff stuff bounds stuff stuff)
     for (int i = 0; i < size; i++) {
       adjustBounds(fractals[i]);
       fractals[i].paint();
     }
   }
+  
+  glFlush();
   glutSwapBuffers(); 
 }
 
@@ -60,10 +78,98 @@ void Reshape(int w, int h){ // function called when window size is changed
 }
 
 //****************************************
+Vec3f arcSnap(float x, float y) {
+  x = (2.0*x / window_width) - 1;
+  y = (2.0*y / window_height) - 1;
+
+  float mag2 = x * x + y * y;
+  float mag = sqrt(mag2);
+
+  if (mag > 1) {
+    x = x*0.999 / mag;  // mult by .999 to account for edge cases of rounding up                                     
+    y = y*0.999 / mag;
+  }
+
+  float z = sqrt(1.0 - (x*x + y*y));
+  return Vec3f::makeVec(x, y, z);
+}
+
+//****************************************
+void MouseButton(int button, int state, int x, int y) {
+  y = window_height - y;
+
+  if (button == GLUT_LEFT_BUTTON) {
+    Vec3f arc_coords = arcSnap(x, y);
+    arcmouse_x = arc_coords[0];
+    arcmouse_y = arc_coords[1];
+    arcmouse_z = arc_coords[2];
+
+    left_mouse_button = !state;  // state==0 if down                                                                 
+  }
+  if (button == GLUT_RIGHT_BUTTON) {
+    right_mouse_button = !state;  // state==0 if down                                                                
+  }
+
+  mouse_x = x, mouse_y = y;
+  glutPostRedisplay();
+}
+
+//****************************************
+void MouseMotion(int x, int y) {
+  y = window_height - y;
+
+  if (left_mouse_button) {
+    // Rotation                                                                                                     
+    Vec3f arc_coords = arcSnap(x, y);
+    float fx = arc_coords[0];
+    float fy = arc_coords[1];
+    float fz = arc_coords[2];
+
+    // Find rotational axis                                                                                        
+    float normal_x = arcmouse_y*fz - arcmouse_z*fy;
+    float normal_y = arcmouse_z*fx - arcmouse_x*fz;
+    float normal_z = arcmouse_x*fy - arcmouse_y*fx;
+
+    // Find rotational angle                                                                                        
+    float ax = sqrt(normal_x*normal_x +
+                    normal_y*normal_y +
+                    normal_z*normal_z);
+
+    float ay = arcmouse_x*fx + arcmouse_y*fy + arcmouse_z*fz;
+    float angle = atan2(ax, ay)*180/3.14159;
+
+    // Modify and save rotation matrix
+    glLoadIdentity();
+    glRotatef(angle, normal_x, normal_y, normal_z);
+    glMultMatrixf(rot_matrix);
+    glGetFloatv(GL_MODELVIEW_MATRIX, rot_matrix);
+
+    arcmouse_x = fx, arcmouse_y = fy, arcmouse_z = fz;
+  } else if (right_mouse_button && y && mouse_y) {
+    // Zoom: Multiplies current zoom by ratio between initial and current y                                         
+    float smy = mouse_y+window_height;
+    float sy = y+window_height;
+    float dy;
+
+    if (sy < 0 && smy < 0) {
+      dy = abs(smy/sy);
+    } else {
+      dy = abs(sy/smy);
+    }
+
+    zoom *= dy;
+  }
+
+  mouse_x = x, mouse_y = y;
+  glutPostRedisplay();
+}
+
+
 void Keyboard(unsigned char key, int x, int y){ 
   switch(key){
   case 32: // Spacebar
     fractals[0].mutateConstants();
+    zoom = 1;
     glutPostRedisplay();
     break;
   case 'F': 
@@ -115,24 +221,21 @@ void createPalette(){
 //****************************************
 int main(int argc, char** argv){
   glutInit(&argc, argv);
+  window_width = glutGet(GLUT_SCREEN_WIDTH);
+  window_height = glutGet(GLUT_SCREEN_HEIGHT);
+  window_aspect = window_width / static_cast<float>(window_height);
+
   createPalette();
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glClearColor(0, 0, 0, 0);
 
   if (argc < 3) {
-    cout << "Please provide expressions for a Clifford Attractor." << endl;
-    exit(0);
+    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
   } else {
     for (int i = 1; i < argc - 1; i+=2)
       fractals.push_back(CliffordAttractor(argv[i], argv[i+1]));
   } 
-  //  fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
-  //  fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
-  //fractals.push_back(AttractorFractal("sin( -1.4 * y ) + cos( -1.4 * x )", "sin( 1.6 * x ) + 0.7 * cos( 1.6 * y )"));
-  //  fractals.push_back(AttractorFractal("(1 * x) - (0.1 * y)", "(0.1 * x) + (0.99 * y)"));
-
-  window_width = glutGet(GLUT_SCREEN_WIDTH);
-  window_height = glutGet(GLUT_SCREEN_HEIGHT);
+  
   GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
   GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
   glutInitWindowPosition(windowX, windowY);
@@ -145,11 +248,13 @@ int main(int argc, char** argv){
   glShadeModel(GL_SMOOTH);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  //  glEnable(GL_DEPTH_TEST);
+  //glEnable(GL_DEPTH_TEST);
   
   // set the event handling methods
   glutDisplayFunc(Repaint);
   glutReshapeFunc(Reshape);
+  glutMouseFunc(MouseButton);
+  glutMotionFunc(MouseMotion);
   glutKeyboardFunc(Keyboard);
   
   glutMainLoop();
@@ -158,68 +263,21 @@ int main(int argc, char** argv){
 }
 
 void adjustBounds(AttractorFractal f) {
-  Vec4d bounds = f.getBounds();
-
-  /*
-  //Center window
-  double fractal_width = bounds[1] - bounds[0];
-  double fractal_height = bounds[3] - bounds[2];
-  double fractal_ratio = fractal_width/fractal_height;
-  
-  int screen_width = glutGet(GLUT_SCREEN_WIDTH);
-  int screen_height = glutGet(GLUT_SCREEN_HEIGHT);
-  double screen_ratio = screen_width/screen_height;
-
-  if (fractal_ratio >= screen_ratio) {
-    window_width = glutGet(GLUT_SCREEN_WIDTH);
-    window_height = window_width/fractal_ratio;
-  } else {
-    window_height = glutGet(GLUT_SCREEN_HEIGHT);
-    window_width = fractal_ratio*window_height;
-  }
-
-  GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
-  GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
-  glutInitWindowPosition(windowX, windowY);
-  glutInitWindowSize(window_width, window_height);
-  windowID = glutCreateWindow("Aesthetic Fractals");
-  */
-  //glViewport (0, 0, (GLsizei) window_width/2, (GLsizei) window_height/2);
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
+  gluPerspective(40.0, window_width/window_height, 1, 1500);
 
-  double fractal_width = bounds[1] - bounds[0];
-  double fractal_height = bounds[3] - bounds[2];
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  BoundingBox bbox = f.getbb();
+  float maxDist = (bbox.max-bbox.min).max();
+  Vec3f eye = Vec3f::makeVec(0.0f*maxDist, 0.0f*maxDist, 1.5f*maxDist);
+  gluLookAt(eye[0]*zoom, eye[1]*zoom, eye[2]*zoom,
+            0, 0, 0,
+            0, 1, 0);
 
-  double width_ratio = window_width/fractal_width;
-  double height_ratio = window_height/fractal_height;
+  glMultMatrixf(rot_matrix);
 
-  if (width_ratio >= height_ratio) {
-    double scaleMin = height_ratio / width_ratio;
-    double scaleMax = width_ratio / height_ratio;
-
-    double b0 = bounds[0];
-    double b1 = bounds[1];
-
-    if (b0 < 0) b0 *= scaleMax;
-    else        b0 *= scaleMin;
-    if (b1 < 0) b1 *= scaleMin;
-    else        b1 *= scaleMax;
-    // fractal takes up more % of height than width; span height and scale width.
-    glOrtho(b0, b1, bounds[2], bounds[3], ((GLfloat)-1), (GLfloat)1);
-  } else {
-    double scaleMax = height_ratio / width_ratio;
-    double scaleMin = width_ratio / height_ratio;
-
-    double b2 = bounds[2];
-    double b3 = bounds[3];
-
-    if (b2 < 0) b2 *= scaleMax;
-    else        b2 *= scaleMin;
-    if (b3 < 0) b3 *= scaleMin;
-    else        b3 *= scaleMax;
-    glOrtho(bounds[0], bounds[1], b2, b3, ((GLfloat)-1), (GLfloat)1);
-  }
-  
-  //  glOrtho(bounds[0], bounds[1], bounds[2], bounds[3], ((GLfloat)-1), (GLfloat)1);
+  // Move the origin up                                                                                             
+  // glTranslatef(0, -maxDist/8, 0);
 }
