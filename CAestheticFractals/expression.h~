@@ -1,10 +1,9 @@
 #ifndef __EXPRESSION_H__
 #define __EXPRESSION_H__
 
-#include <unordered_set>
+#include <tr1/unordered_set>
 #include <string>
 #include <vector>
-#include <stdlib.h>
 
 using namespace std;
 
@@ -31,7 +30,7 @@ class Node {
     } else {
       char* fail;
       long l = strtol(value.c_str(), &fail, 10);
-      type = (fail ? TYPE_VAR : TYPE_NUM);
+      type = (*fail ? TYPE_VAR : TYPE_NUM);
     }
   }
   
@@ -77,7 +76,6 @@ class Expression {
   void printRPN();
   void printTree(Node *n);
   void printTreeRPN(Node *n);
-  void printConstants();
 
   void createTree(vector<string> tokens);
   double evaluate(vector<double> values);

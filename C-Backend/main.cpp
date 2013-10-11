@@ -227,15 +227,7 @@ int main(int argc, char** argv){
 
   createPalette();
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-  glClearColor(0, 0, 0, 0);
 
-  if (argc < 3) {
-    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
-  } else {
-    for (int i = 1; i < argc - 1; i+=2)
-      fractals.push_back(CliffordAttractor(argv[i], argv[i+1]));
-  } 
-  
   GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
   GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
   glutInitWindowPosition(windowX, windowY);
@@ -243,6 +235,15 @@ int main(int argc, char** argv){
   windowID = glutCreateWindow("Aesthetic Fractals");
   glutFullScreen();
   fullScreen=true;
+
+  if (argc < 3) {
+    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
+  } else {
+    for (int i = 1; i < argc - 1; i+=2)
+      fractals.push_back(CliffordAttractor(argv[i], argv[i+1]));
+  } 
+
+  glClearColor(0, 0, 0, 0);
 
   // Enable Blending for transparency
   glShadeModel(GL_SMOOTH);
@@ -256,7 +257,6 @@ int main(int argc, char** argv){
   glutMouseFunc(MouseButton);
   glutMotionFunc(MouseMotion);
   glutKeyboardFunc(Keyboard);
-  
   glutMainLoop();
 
   return 0;

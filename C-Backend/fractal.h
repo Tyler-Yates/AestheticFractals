@@ -49,9 +49,10 @@ class CliffordAttractor : public AttractorFractal {
  CliffordAttractor(string x, string y) : AttractorFractal() {
     vector<string> consts = {"a", "b", "c", "d"};
     vector<string> vars = {"x", "y"};
-    
+
     expressionX = new Expression(x, consts, vars);
     expressionY = new Expression(y, consts, vars);
+
     clear();
     constructConstants();
     calculate();
