@@ -169,6 +169,7 @@ void Keyboard(unsigned char key, int x, int y){
   switch(key){
   case 32: // Spacebar
     fractals[0].mutateConstants();
+    zoom = 1;
     glutPostRedisplay();
     break;
   case 'F': 
