@@ -6,6 +6,14 @@
 
 using namespace std;
 
+GLfloat minX = -2.2f, maxX = 0.8f, minY = -1.5f, maxY = 1.5; // complex plane boundaries                            //GLfloat stepX = (maxX - minX)/(GLfloat)window_width;                                                              //GLfloat stepY = (maxY - minY)/(GLfloat)window_height;                                                              
+const int paletteSize = 128;
+GLfloat palette[paletteSize][3];
+
+const GLfloat radius = 5.0f;
+bool fullScreen=false;
+
+
 int window_width=600, window_height=600;
 float window_aspect = window_width / static_cast<float>(window_height);
 float zoom = 1;
@@ -25,6 +33,17 @@ GLfloat rot_matrix[16] = {1, 0, 0, 0,
 
 vector<CliffordAttractor> fractals;
 //vector<AttractorFractal> fractals;
+
+Color kRed = Color(1, 0, 0);
+Color kGreen = Color(0, 1, 0);
+Color kBlue = Color(0, 0, 1);
+Color kYellow = Color(1, 1, 0);
+Color kViolet = Color(0.541176, 0.168627, 0.886275);
+Color kBrown = Color(0.647, 0.1647, 0.1647);
+Color kOrange = Color(1, 0.498039, 0.313725);
+Color kBlack = Color(0, 0, 0);
+Color kWhite = Color(1, 1, 1);
+
 
 //****************************************
 GLfloat* calculateColor(GLfloat u, GLfloat v){

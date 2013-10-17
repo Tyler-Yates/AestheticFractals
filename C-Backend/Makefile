@@ -2,10 +2,10 @@
 # Aesthetic Fractals: Makefile
 
 CC = g++
-CFLAGS = -g -std=c++11   # Use -std=c++0x for versions of gcc and g++ <4.7
+CFLAGS = -g -std=c++0x  # Use -std=c++0x for versions of gcc and g++ <4.7, c++11 otherwise
 INCLUDE =
 LIBDIR =
-LIBS = -lglut -lGLU -lm -lGL
+LIBS = -lglut -lGLU -lm -lGL -lGLEW
 
 ###########################################################
 # Options if compiling on Mac
@@ -24,8 +24,8 @@ endif
 
 ###########################################################
 
-aesthetics: main.o expression.o expressionParser.o fractal.o
-	${CC} ${CFLAGS} $(INCLUDE) -o aesthetics main.o expression.o fractal.o expressionParser.o ${LIBDIR} ${LIBS}
+aesthetics: main.o expression.o expressionParser.o fractal.o fbo.o
+	${CC} ${CFLAGS} $(INCLUDE) -o aesthetics main.o expression.o fractal.o expressionParser.o fbo.o ${LIBDIR} ${LIBS}
 
 main.o: main.cpp expression.h fractal.h common.h
 	${CC} -c ${CFLAGS} $(INCLUDE) main.cpp
@@ -38,6 +38,9 @@ fractal.o: fractal.cpp fractal.h vec.h types.h common.h rng.h
 
 expressionParser.o: libs/expressionParser.cpp libs/expressionParser.h
 	${CC} -c ${CFLAGS} $(INCLUDE) libs/expressionParser.cpp
+
+fbo.o: fbo.cpp fbo.h common.h
+	${CC} -c ${CFLAGS} $(INCLUDE) fbo.cpp
 
 clean:
 	rm -f aesthetics *.o *~ *# *.gch
