@@ -1,15 +1,18 @@
+#include <iostream>
+
 #include "fbo.h"
 #include "libs/CImg-1.5.6/CImg.h"
 
 using namespace cimg_library;
 
 GLuint framebuffer;
-GLenum status;
-
+GLuint status;
 GLuint image_width = 1024, image_height = 1024;
 
 void ExternalRenderer::switchToExternalTarget() {
+  cout << "test" << endl;
   glGenFramebuffers(1, &framebuffer);
+  cout << "test" << endl;
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 }
 
@@ -51,5 +54,5 @@ void ExternalRenderer::outputToImage(string name) {
   GLubyte *buffer = (GLubyte *)malloc(bytes);
   glReadPixels(0, 0, image_width, image_height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
   CImg<GLubyte> img(buffer,image_width,image_height,1,3,false);
-  img.save("ScreenShot.ppm");
+  img.save((name + ".ppm").c_str());
 }

@@ -3,6 +3,7 @@
 #include "common.h"
 #include "expression.h"
 #include "fractal.h"
+#include "fbo.h"
 
 using namespace std;
 
@@ -206,6 +207,9 @@ void Keyboard(unsigned char key, int x, int y){
     }
     glutPostRedisplay();
     break;
+  case 's':
+    ExternalRenderer::outputToImage("test");
+    break;
   case 27 : // escape key - close the program
     glutDestroyWindow(windowID);
     exit(0);
@@ -240,6 +244,12 @@ void createPalette(){
 //****************************************
 int main(int argc, char** argv){
   glutInit(&argc, argv);
+  GLenum err = glewInit();
+  if (GLEW_OK != err)
+    {
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+      exit(0);
+    }
   window_width = glutGet(GLUT_SCREEN_WIDTH);
   window_height = glutGet(GLUT_SCREEN_HEIGHT);
   window_aspect = window_width / static_cast<float>(window_height);
@@ -255,13 +265,6 @@ int main(int argc, char** argv){
   glutFullScreen();
   fullScreen=true;
 
-  if (argc < 3) {
-    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
-  } else {
-    for (int i = 1; i < argc - 1; i+=2)
-      fractals.push_back(CliffordAttractor(argv[i], argv[i+1]));
-  } 
-
   glClearColor(0, 0, 0, 0);
 
   // Enable Blending for transparency
@@ -269,7 +272,23 @@ int main(int argc, char** argv){
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   //glEnable(GL_DEPTH_TEST);
-  
+
+  if (argc < 3) {
+    cout << "test" << endl;
+    ExternalRenderer::switchToExternalTarget();
+    cout << "test" << endl;
+    GLuint renderbuffer;
+    ExternalRenderer::getNewRenderBuffer(&renderbuffer);
+    cout << "test" << endl;
+    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
+  } else {
+    ExternalRenderer::switchToExternalTarget();
+    GLuint renderbuffer;
+    ExternalRenderer::getNewRenderBuffer(&renderbuffer);
+    for (int i = 1; i < argc - 1; i+=2)
+      fractals.push_back(CliffordAttractor(argv[i], argv[i+1]));
+  } 
+
   // set the event handling methods
   glutDisplayFunc(Repaint);
   glutReshapeFunc(Reshape);
