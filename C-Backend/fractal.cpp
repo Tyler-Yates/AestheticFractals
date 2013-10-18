@@ -55,9 +55,10 @@ void AttractorFractal::paint() {
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_FLOAT, sizeof(Vec3f), points.data());
   glDrawArrays(GL_POINTS, 0, getNumPoints());
-
   // deactivate vertex arrays after drawing
   glDisableClientState(GL_VERTEX_ARRAY);
+
+  cout << "drew fractal" << endl;
 }
 
 void AttractorFractal::clear() {
