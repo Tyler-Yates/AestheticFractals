@@ -14,6 +14,11 @@ void ExternalRenderer::switchToExternalTarget() {
   glGenFramebuffers(1, framebuffer);
   cout << "test" << endl;
   glBindFramebuffer(GL_FRAMEBUFFER, *framebuffer);
+
+  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (status != GL_FRAMEBUFFER_COMPLETE) {
+    fprintf(stderr, "Error generating new frame buffer\n");
+  }
 }
 
 void ExternalRenderer::switchToWindowTarget() {
@@ -28,7 +33,7 @@ void ExternalRenderer::getNewRenderBuffer(GLuint *buffer) {
 
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    // Handle errors
+    fprintf(stderr, "Error generating new render buffer\n");
   }
 }
 

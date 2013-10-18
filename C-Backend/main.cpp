@@ -275,6 +275,7 @@ int main(int argc, char** argv){
   }
 
   if (argc < 3) {
+    // Use ext renderer for testing only
     ExternalRenderer::switchToExternalTarget();
     GLuint renderbuffer;
     ExternalRenderer::getNewRenderBuffer(&renderbuffer);
@@ -283,8 +284,12 @@ int main(int argc, char** argv){
     ExternalRenderer::switchToExternalTarget();
     GLuint renderbuffer;
     ExternalRenderer::getNewRenderBuffer(&renderbuffer);
-    for (int i = 1; i < argc - 1; i+=2)
-      fractals.push_back(CliffordAttractor(argv[i], argv[i+1]));
+    for (int i = 1; i < argc - 2; i+=3) {
+      fractals.push_back(CliffordAttractor(argv[i+1], argv[i+2]));
+      Repaint();
+      ExternalRenderer::outputToImage(argv[i]);
+      fractals.clear();
+    }
   } 
   
   // set the event handling methods
