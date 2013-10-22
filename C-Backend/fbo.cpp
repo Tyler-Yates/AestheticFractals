@@ -7,17 +7,16 @@ using namespace cimg_library;
 
 GLuint framebuffer[1];
 GLuint status;
-GLuint image_width = 1024, image_height = 1024;
 
 void ExternalRenderer::switchToExternalTarget() {
-  cout << "test genframebuffers" << endl;
   glGenFramebuffers(1, framebuffer);
-  cout << "test" << endl;
   glBindFramebuffer(GL_FRAMEBUFFER, *framebuffer);
 
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    fprintf(stderr, "Error generating new frame buffer\n");
+    fprintf(stderr, "Error while generating new frame buffer:\n");
+    fprintf(stderr, "glCheckFrameBufferStatus Error Num: %i\n", status);
+    exit(0);
   }
 }
 
@@ -33,7 +32,9 @@ void ExternalRenderer::getNewRenderBuffer(GLuint *buffer) {
 
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    fprintf(stderr, "Error generating new render buffer\n");
+    fprintf(stderr, "Error while generating new render buffer:\n");
+    fprintf(stderr, "glCheckFrameBufferStatus Error Num: %i\n", status);
+    exit(0);
   }
 }
 
@@ -85,6 +86,7 @@ void ExternalRenderer::outputToImage(string name) {
   convertToNonInterleaved(image_width, image_height, buffer, untangled);
   CImg<GLubyte> img(untangled,image_width,image_height,1,3,false);
   string filename = name + ".ppm";
+  string metafilename = name + ".ppm.info";
   img.save(filename.c_str());
   cout << "saved to " + filename << endl;
 }

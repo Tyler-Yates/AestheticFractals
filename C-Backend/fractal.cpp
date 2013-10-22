@@ -67,6 +67,19 @@ void AttractorFractal::clear() {
   maxX = maxY = INT_MIN;
 }
 
+void AttractorFractal::saveToFile(string name) {
+  string fn = name + ".info";
+  std::ofstream out(fn);
+  std::streambuf *coutbuf = cout.rdbuf();
+  cout.rdbuf(out.rdbuf());
+
+  expressionX->print();
+  expressionX->printConstants();
+  expressionY->print();
+  expressionY->printConstants();
+  cout.rdbuf(coutbuf);
+}
+
 void CliffordAttractor::constructConstants() {
   //  while (1) {
   expressionX->constVals.clear();
@@ -83,7 +96,7 @@ void CliffordAttractor::constructConstants() {
   cout << "ExpressionY: ";
   expressionY->printRPN();
 
-    /*
+    /* Constants evaluation
     double x = 0;
     double y = 0;
 

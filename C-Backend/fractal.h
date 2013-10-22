@@ -40,7 +40,7 @@ class AttractorFractal {
   void calculate();
   void paint();
   void clear();
-  
+  void saveToFile(string name);
 };
 
 class CliffordAttractor : public AttractorFractal {  

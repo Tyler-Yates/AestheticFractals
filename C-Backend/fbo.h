@@ -5,6 +5,8 @@
 
 using namespace std;
 
+static GLuint image_width, image_height;
+
 class ExternalRenderer {
 public:
   static void switchToExternalTarget();

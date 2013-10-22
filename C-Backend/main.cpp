@@ -7,7 +7,7 @@
 
 using namespace std;
 
-GLfloat minX = -2.2f, maxX = 0.8f, minY = -1.5f, maxY = 1.5; // complex plane boundaries                            //GLfloat stepX = (maxX - minX)/(GLfloat)window_width;                                                              //GLfloat stepY = (maxY - minY)/(GLfloat)window_height;                                                              
+GLfloat minX = -2.2f, maxX = 0.8f, minY = -1.5f, maxY = 1.5; // complex plane boundaries                 
 const int paletteSize = 128;
 GLfloat palette[paletteSize][3];
 
@@ -95,6 +95,13 @@ void Repaint() {
 void Reshape(int w, int h){ // function called when window size is changed
   glViewport (0, 0, (GLsizei)w, (GLsizei)h); // set new dimension of viewable screen
   glutPostRedisplay();
+}
+
+void resize() {
+  glutReshapeWindow(window_width,window_height); // sets default window size
+  GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
+  GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
+  glutPositionWindow(windowX, windowY); // centers window on the screen  
 }
 
 //****************************************
@@ -195,10 +202,7 @@ void Keyboard(unsigned char key, int x, int y){
   case 'F': 
   case 'f':
     if(fullScreen){
-      glutReshapeWindow(window_width,window_height); // sets default window size
-      GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
-      GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
-      glutPositionWindow(windowX, windowY); // centers window on the screen
+      resize();
       fullScreen = false;
     }
     else{
@@ -256,9 +260,6 @@ int main(int argc, char** argv){
   glutInitWindowPosition(windowX, windowY);
   glutInitWindowSize(window_width, window_height);
   windowID = glutCreateWindow("Aesthetic Fractals");
-  glutFullScreen();
-  fullScreen=true;
-
   glClearColor(0, 0, 0, 0);
 
   // Enable Blending for transparency
@@ -274,22 +275,29 @@ int main(int argc, char** argv){
       exit(0);
   }
 
+  image_width = window_width;
+  image_height = window_height;
+
   if (argc < 3) {
-    // Use ext renderer for testing only
-    ExternalRenderer::switchToExternalTarget();
-    GLuint renderbuffer;
-    ExternalRenderer::getNewRenderBuffer(&renderbuffer);
+    glutFullScreen();
+    fullScreen=true;
     fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
   } else {
     ExternalRenderer::switchToExternalTarget();
     GLuint renderbuffer;
     ExternalRenderer::getNewRenderBuffer(&renderbuffer);
+    glutHideWindow();
+
     for (int i = 1; i < argc - 2; i+=3) {
-      fractals.push_back(CliffordAttractor(argv[i+1], argv[i+2]));
+      CliffordAttractor ca(argv[i+1], argv[i+2]);
+      fractals.push_back(ca);
       Repaint();
       ExternalRenderer::outputToImage(argv[i]);
+      ca.saveToFile(argv[i]);
       fractals.clear();
     }
+
+    ExternalRenderer::deleteRenderBuffer(&renderbuffer);
   } 
   
   // set the event handling methods
@@ -319,6 +327,6 @@ void adjustBounds(AttractorFractal f) {
 
   glMultMatrixf(rot_matrix);
 
-  // Move the origin up                                                                                             
+  // Move the origin up 
   // glTranslatef(0, -maxDist/8, 0);
 }
