@@ -13,6 +13,8 @@
 using namespace std;
 
 Expression::Expression(string infixExpression, vector<string> consts, vector<string> vars) {
+  infixString = infixExpression;
+
   root = NULL;
   vector<string> rpnTokens;
 
@@ -86,6 +88,10 @@ double Expression::evalTree(Node *n, vector<double> values) {
   }
 
   return 0.0;
+}
+
+void Expression::printInfixString() {
+  cout << infixString << endl;
 }
 
 void Expression::printConstants() {

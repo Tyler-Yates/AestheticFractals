@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 
 #include "common.h"
@@ -14,12 +15,11 @@ GLfloat palette[paletteSize][3];
 const GLfloat radius = 5.0f;
 bool fullScreen=false;
 
-
+int windowID;
 int window_width=600, window_height=600;
 float window_aspect = window_width / static_cast<float>(window_height);
-float zoom = 1;
-int windowID;
 
+float zoom = 1;
 float mouse_x, mouse_y;
 float arcmouse_x, arcmouse_y, arcmouse_z;
 
@@ -102,6 +102,15 @@ void resize() {
   GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
   GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
   glutPositionWindow(windowX, windowY); // centers window on the screen  
+}
+
+void resize(int w, int h) {
+  window_width = w;
+  window_height = h;
+  ExternalRenderer::setImageWidth(window_width);
+  ExternalRenderer::setImageHeight(window_height);
+  resize();
+  Reshape(w, h);
 }
 
 //****************************************
@@ -282,6 +291,15 @@ int main(int argc, char** argv){
     glutFullScreen();
     fullScreen=true;
     fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
+
+    // set the event handling methods
+    glutDisplayFunc(Repaint);
+    glutReshapeFunc(Reshape);
+    glutMouseFunc(MouseButton);
+    glutMotionFunc(MouseMotion);
+    glutKeyboardFunc(Keyboard);
+    glutMainLoop();
+
   } else {
     ExternalRenderer::switchToExternalTarget();
     GLuint renderbuffer;
@@ -289,6 +307,11 @@ int main(int argc, char** argv){
     glutHideWindow();
 
     for (int i = 1; i < argc - 2; i+=3) {
+      if (strcmp(argv[i],"-s") == 0) {
+        resize(stoi(argv[++i]), stoi(argv[++i]));
+        i++;
+      }
+
       CliffordAttractor ca(argv[i+1], argv[i+2]);
       fractals.push_back(ca);
       Repaint();
@@ -300,14 +323,6 @@ int main(int argc, char** argv){
     ExternalRenderer::deleteRenderBuffer(&renderbuffer);
   } 
   
-  // set the event handling methods
-  glutDisplayFunc(Repaint);
-  glutReshapeFunc(Reshape);
-  glutMouseFunc(MouseButton);
-  glutMotionFunc(MouseMotion);
-  glutKeyboardFunc(Keyboard);
-  glutMainLoop();
-
   return 0;
 }
 

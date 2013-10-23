@@ -65,6 +65,8 @@ class Node {
 class Expression {
  public:
   Expression(string infixExpression, vector<string> consts, vector<string> vars);
+
+  string infixString;
   
   Node *root;
   vector<string> vars;
@@ -78,6 +80,7 @@ class Expression {
   void printTree(Node *n);
   void printTreeRPN(Node *n);
   void printConstants();
+  void printInfixString();
 
   void createTree(vector<string> tokens);
   double evaluate(vector<double> values);

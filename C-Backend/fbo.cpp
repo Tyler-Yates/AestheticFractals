@@ -77,8 +77,6 @@ void ExternalRenderer::switchToWindowTarget() {
 void ExternalRenderer::getNewRenderBuffer(GLuint *buffer) {
   glGenRenderbuffers(1, buffer);
   glBindRenderbuffer(GL_RENDERBUFFER, *buffer);
-  cout << image_width << endl;
-  cout << image_height << endl;
   glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, image_width, image_height);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, *buffer);
 

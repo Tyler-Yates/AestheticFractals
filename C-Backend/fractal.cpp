@@ -71,9 +71,9 @@ void AttractorFractal::saveToFile(string name) {
   std::streambuf *coutbuf = cout.rdbuf();
   cout.rdbuf(out.rdbuf());
 
-  expressionX->print();
+  expressionX->printInfixString();
   expressionX->printConstants();
-  expressionY->print();
+  expressionY->printInfixString();
   expressionY->printConstants();
   cout.rdbuf(coutbuf);
 }
