@@ -2,10 +2,10 @@
 # Aesthetic Fractals: Makefile
 
 CC = g++
-CFLAGS = -g -std=c++0x  # Use -std=c++0x for versions of gcc and g++ <4.7, c++11 otherwise
+CFLAGS = -g -std=c++11  # Use -std=c++0x for versions of gcc and g++ <4.7, c++11 otherwise
 INCLUDE =
 LIBDIR =
-LIBS = -lglut -lGLU -lm -lGLEW -lGL
+LIBS = -lglut -lGLU -lm -lGLEW -lGL -lX11
 
 ###########################################################
 # Options if compiling on Mac
@@ -15,7 +15,7 @@ CC = g++
 CFLAGS = -D__MAC__ -std=c++11 -stdlib=libc++
 INCLUDE = 
 LIBDIR = -L/usr/X11/lib
-LIBS = -framework OpenGL -framework GLUT
+LIBS = -framework OpenGL -framework GLUT -lX11
 endif
 
 ###########################################################

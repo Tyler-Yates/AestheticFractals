@@ -42,8 +42,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener, M
 	{
 		new GraphicalInterface();
 		
-		ProcessBuilder processBuilder = new ProcessBuilder(new String[]{"C-Backend/aesthetics", 
-				Equation.generateRandomXEquation().toString(), Equation.generateRandomYEquation().toString()});
+		ProcessBuilder processBuilder = new ProcessBuilder(new String[]{"C-Backend/aesthetics", "TestFractal",
+				new Equation("sin(-1.4 * y) + cos(-1.4 * x)").toString(), new Equation("sin(1.6 * x) + 0.7 * cos(1.6 * y)").toString()});
+				//Equation.generateRandomXEquation().toString(), Equation.generateRandomYEquation().toString()});
 		processBuilder.start();
 	}
 	
