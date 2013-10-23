@@ -22,7 +22,7 @@ Expression::Expression(string infixExpression, vector<string> consts, vector<str
   this->numVars = vars.size();
   for (string s: vars)
     addVar(s);
-  
+
   this->consts = consts;
   this->numConsts = consts.size();
   for (string s: consts)
