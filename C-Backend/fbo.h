@@ -5,14 +5,14 @@
 
 using namespace std;
 
-static GLuint image_width, image_height;
-
 class ExternalRenderer {
 public:
+  static void setImageWidth(int width);
+  static void setImageHeight(int height);
   static void switchToExternalTarget();
   static void switchToWindowTarget();
   static void getNewRenderBuffer(GLuint *buffer);
-  static void   deleteRenderBuffer(GLuint *renderbuffer);
+  static void deleteRenderBuffer(GLuint *renderbuffer);
   static void outputToImage(string name);
 };
 #endif

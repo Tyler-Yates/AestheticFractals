@@ -5,19 +5,69 @@
 
 using namespace cimg_library;
 
-GLuint framebuffer[1];
+int image_width = 1024, image_height = 1024;
+GLuint framebuffer;
 GLuint status;
 
-void ExternalRenderer::switchToExternalTarget() {
-  glGenFramebuffers(1, framebuffer);
-  glBindFramebuffer(GL_FRAMEBUFFER, *framebuffer);
+void ExternalRenderer::setImageWidth(int width) {
+  image_width = width;
+}
 
-  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-  if (status != GL_FRAMEBUFFER_COMPLETE) {
-    fprintf(stderr, "Error while generating new frame buffer:\n");
-    fprintf(stderr, "glCheckFrameBufferStatus Error Num: %i\n", status);
-    exit(0);
+void ExternalRenderer::setImageHeight(int height) {
+  image_height = height;
+}
+
+void printFrameBufferError() {
+  switch(status) {
+  case GL_FRAMEBUFFER_COMPLETE:
+    return;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+    cout << "An attachment could not be bound to frame buffer object!" << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+    cout << "Attachments are missing! At least one image (texture) must be bound to the frame buffer object!" << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+    cout << "The dimensions of the buffers attached to the currently used frame buffer object do not match!" << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+cout << "The formats of the currently used frame buffer object are not supported or do not fit together!" << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+cout << "A Draw buffer is incomplete or undefinied. All draw buffers must specify attachment points that have images attached." << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+cout << "A Read buffer is incomplete or undefinied. All read buffers must specify attachment points that have images attached." << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+cout << "All images must have the same number of multisample samples." << endl;
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS :
+cout << "If a layered image is attached to one attachment, then all attachments must be layered attachments. The attached layers do not have to have the same number of layers, nor do the layers have to come from the same kind of texture." << endl;;
+    break;
+
+  case GL_FRAMEBUFFER_UNSUPPORTED:
+cout << "Attempt to use an unsupported format combinaton!" << endl;
+break;
+
+ default:
+cout << "Unknown error while attempting to create frame buffer object!" << endl;
+    break;
   }
+}
+
+void ExternalRenderer::switchToExternalTarget() {
+  glGenFramebuffers(1, &framebuffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 }
 
 void ExternalRenderer::switchToWindowTarget() {
@@ -27,13 +77,15 @@ void ExternalRenderer::switchToWindowTarget() {
 void ExternalRenderer::getNewRenderBuffer(GLuint *buffer) {
   glGenRenderbuffers(1, buffer);
   glBindRenderbuffer(GL_RENDERBUFFER, *buffer);
+  cout << image_width << endl;
+  cout << image_height << endl;
   glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, image_width, image_height);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, *buffer);
 
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    fprintf(stderr, "Error while generating new render buffer:\n");
-    fprintf(stderr, "glCheckFrameBufferStatus Error Num: %i\n", status);
+    fprintf(stderr, "Error while attaching new render buffer:\n");
+    printFrameBufferError();
     exit(0);
   }
 }
@@ -66,19 +118,8 @@ void convertToNonInterleaved(int w, int h, unsigned char* tangled, unsigned char
 
 void ExternalRenderer::outputToImage(string name) {
   cout << "saving img" << endl;
-  /*  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  int bytes = image_width*image_height*3; //Color space is RGB
-  GLubyte *buffer = (GLubyte *)malloc(bytes);
 
-  glFinish();
-  glReadPixels(0, 0, image_width, image_height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-  glFinish();
-  */
-
-  glBindFramebuffer(GL_FRAMEBUFFER, *framebuffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
   int bytes = image_width*image_height*3; //Color space is RGB
   GLubyte *buffer = (GLubyte *)malloc(bytes);
   GLubyte *untangled = (GLubyte *)malloc(bytes);
@@ -88,5 +129,6 @@ void ExternalRenderer::outputToImage(string name) {
   string filename = name + ".ppm";
   string metafilename = name + ".ppm.info";
   img.save(filename.c_str());
+
   cout << "saved to " + filename << endl;
 }

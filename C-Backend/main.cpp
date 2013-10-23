@@ -252,7 +252,7 @@ int main(int argc, char** argv){
   window_height = glutGet(GLUT_SCREEN_HEIGHT);
   window_aspect = window_width / static_cast<float>(window_height);
 
-  createPalette();
+  //createPalette();
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
   GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
@@ -275,8 +275,8 @@ int main(int argc, char** argv){
       exit(0);
   }
 
-  image_width = window_width;
-  image_height = window_height;
+  ExternalRenderer::setImageWidth(window_width);
+  ExternalRenderer::setImageHeight(window_height);
 
   if (argc < 3) {
     glutFullScreen();
