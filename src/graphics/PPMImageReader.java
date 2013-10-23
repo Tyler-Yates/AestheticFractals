@@ -136,7 +136,7 @@ public class PPMImageReader extends ImageReader {
     }    
   }
 
-  private BufferedImage read(ImageInputStream in)throws IOException{
+  public BufferedImage read(ImageInputStream in)throws IOException{
     readHeader(in);
 
     byte[] data;

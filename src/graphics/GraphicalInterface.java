@@ -1,5 +1,8 @@
 package graphics;
 
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 
 import equations.Equation;
@@ -8,6 +11,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -21,6 +27,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener, M
 	public static JFrame frame;
 	
 	static int mouseX, mouseY;
+	
+	static PPMImageReader reader = new PPMImageReader(null);
 	
 	private static final double VERSION = 0.00;
 	
@@ -39,13 +47,13 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener, M
 	}
 	
 	public static void main(String args[]) throws IOException
-	{
-		new GraphicalInterface();
-		
+	{	
 		ProcessBuilder processBuilder = new ProcessBuilder(new String[]{"C-Backend/aesthetics", "TestFractal",
 				new Equation("sin(-1.4 * y) + cos(-1.4 * x)").toString(), new Equation("sin(1.6 * x) + 0.7 * cos(1.6 * y)").toString()});
 				//Equation.generateRandomXEquation().toString(), Equation.generateRandomYEquation().toString()});
-		processBuilder.start();
+		//processBuilder.start();
+		
+		new GraphicalInterface();
 	}
 	
 	public void drawBoxes(Graphics g) {
@@ -68,8 +76,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener, M
 	
 	public void paint(Graphics g)
 	{
-
-		repaint();
+		ImageInputStream inputStream;
+		try {
+			File f = new File("TestFractal.ppm");
+			System.out.println(f.getAbsolutePath());
+			inputStream = new FileImageInputStream(new File("TestFractal.ppm"));
+			BufferedImage image = reader.read(inputStream);
+			g.drawImage(image, 0, 0, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//repaint();
 	}
 
 	@Override
