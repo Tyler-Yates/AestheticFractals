@@ -290,7 +290,8 @@ int main(int argc, char** argv){
   if (argc < 3) {
     glutFullScreen();
     fullScreen=true;
-    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
+    fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
+												   //"sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
 
     // set the event handling methods
     glutDisplayFunc(Repaint);
@@ -336,6 +337,8 @@ void adjustBounds(AttractorFractal f) {
   BoundingBox bbox = f.getbb();
   float maxDist = (bbox.max-bbox.min).max();
   Vec3f eye = Vec3f::makeVec(0.0f*maxDist, 0.0f*maxDist, 1.5f*maxDist);
+  //  Vec3f eye = Vec3f::makeVec(0.5f*maxDist, 0.0f*maxDist, 1.5f*maxDist);
+  //  Vec3f eye = Vec3f::makeVec((bbox.max[0]+bbox.min[0]) / 2, (bbox.max[1]+bbox.min[1]) / 2, 1.5f*maxDist);
   gluLookAt(eye[0]*zoom, eye[1]*zoom, eye[2]*zoom,
             0, 0, 0,
             0, 1, 0);
