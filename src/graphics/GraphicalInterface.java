@@ -5,16 +5,11 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import fractals.Equation;
 import fractals.Generator;
 
 /**
@@ -27,12 +22,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     private static final long serialVersionUID = 749344840243728058L;
 
     public static JFrame frame;
+    
+    public static boolean needsRedraw = true;
 
     static int mouseX, mouseY; // Mouse location on the screen
-
-    static PPMImageReader reader = new PPMImageReader(null); // Responsible for
-                                                             // reading in the
-                                                             // fractal images
 
     private static final double VERSION = 0.00;
 
@@ -50,21 +43,17 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         frame.add(this);
     }
 
-    public static void main(String args[]) throws IOException
-    {
-        ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
-                "C-Backend/aesthetics", "-s", "768", "1024", "TestFractal",
-                new Equation("sin(-1.4 * y) + cos(-1.4 * x)").toString(),
-                new Equation("sin(1.6 * x) + 0.7 * cos(1.6 * y)").toString() });
-        // Equation.generateRandomXEquation().toString(),
-        // Equation.generateRandomYEquation().toString()});
-        processBuilder.start();
-
+    public static void main(String args[]) throws IOException, InterruptedException
+    {  
+        Generator.generateNewGeneration();
         new GraphicalInterface();
     }
 
     public void drawInterface(Graphics g)
     {
+        g.setColor(Color.white);
+        g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
+        
         int boxWidth = frame.getWidth() / 3;
         int boxHeight = frame.getHeight() / 3;
 
@@ -102,20 +91,12 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
     public void paint(Graphics g)
     {
-        ImageInputStream inputStream;
-        try
+        if(needsRedraw)
         {
-            File f = new File("TestFractal.ppm");
-            System.out.println(f.getAbsolutePath());
-            inputStream = new FileImageInputStream(new File("TestFractal.ppm"));
-            BufferedImage image = reader.read(inputStream);
-            g.drawImage(image, 0, 0, null);
-        } catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            drawInterface(g);
+            needsRedraw=false;
         }
-        // repaint();
+        repaint();
     }
 
     @Override
@@ -132,6 +113,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
         mouseX = x - frame.getInsets().left;
         mouseY = y - frame.getInsets().top;
+        
+        needsRedraw=true;
     }
 
     @Override

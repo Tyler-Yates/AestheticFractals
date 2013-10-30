@@ -1,6 +1,9 @@
 package fractals;
 
+import graphics.GraphicalInterface;
+
 import java.awt.Graphics;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Generator
@@ -15,8 +18,20 @@ public class Generator
         
         for(int i=0; i<9; i++)
         {
-            fractals.add(new Fractal());
+            Fractal newFractal = new Fractal();
+            try
+            {
+                newFractal.generateImage();
+            } catch (IOException | InterruptedException e)
+            {
+                System.out.println("error");
+                
+                e.printStackTrace();
+            }
+            fractals.add(newFractal);
         }
+        
+        GraphicalInterface.needsRedraw=true;
     }
 
     public static void drawImage(int index, Graphics g, int x, int y)
