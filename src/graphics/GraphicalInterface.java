@@ -28,6 +28,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     static int mouseX, mouseY; // Mouse location on the screen
 
     private static final double VERSION = 0.00;
+    
+    private static int selectedBoxX,selectedBoxY;
 
     /**
      * Initializes the JFrame
@@ -93,6 +95,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     {
         if(needsRedraw)
         {
+            System.out.println("draw");
+            
             drawInterface(g);
             needsRedraw=false;
         }
@@ -114,20 +118,26 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         mouseX = x - frame.getInsets().left;
         mouseY = y - frame.getInsets().top;
         
-        needsRedraw=true;
+        int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
+        int t = mouseY / (frame.getHeight() / 3) * (frame.getHeight() / 3);
+        
+        if(l!=selectedBoxX | t!=selectedBoxY)
+        {
+            needsRedraw=true;
+            selectedBoxX=l;
+            selectedBoxY=t;
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void mousePressed(MouseEvent e)
     {
-        // TODO Auto-generated method stub
 
     }
 
@@ -140,14 +150,12 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     @Override
     public void mouseEntered(MouseEvent e)
     {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
-        // TODO Auto-generated method stub
 
     }
 }

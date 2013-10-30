@@ -88,7 +88,6 @@ void Repaint() {
   }
   
   glFlush();
-  glutSwapBuffers(); 
 }
 
 //****************************************
@@ -301,12 +300,12 @@ int main(int argc, char** argv){
     glutKeyboardFunc(Keyboard);
     glutMainLoop();
 
-  } else {
+  } else {    
+    glutHideWindow();
     ExternalRenderer::switchToExternalTarget();
     GLuint renderbuffer;
     ExternalRenderer::getNewRenderBuffer(&renderbuffer);
-    glutHideWindow();
-
+    
     for (int i = 1; i < argc - 2; i+=3) {
       if (strcmp(argv[i],"-s") == 0) {
         resize(stoi(argv[++i]), stoi(argv[++i]));
@@ -337,8 +336,6 @@ void adjustBounds(AttractorFractal f) {
   BoundingBox bbox = f.getbb();
   float maxDist = (bbox.max-bbox.min).max();
   Vec3f eye = Vec3f::makeVec(0.0f*maxDist, 0.0f*maxDist, 1.5f*maxDist);
-  //  Vec3f eye = Vec3f::makeVec(0.5f*maxDist, 0.0f*maxDist, 1.5f*maxDist);
-  //  Vec3f eye = Vec3f::makeVec((bbox.max[0]+bbox.min[0]) / 2, (bbox.max[1]+bbox.min[1]) / 2, 1.5f*maxDist);
   gluLookAt(eye[0]*zoom, eye[1]*zoom, eye[2]*zoom,
             0, 0, 0,
             0, 1, 0);
