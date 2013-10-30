@@ -1,4 +1,5 @@
 *.o
 *.ppm
 *.info
+*.class
 aesthetics

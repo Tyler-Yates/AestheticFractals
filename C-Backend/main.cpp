@@ -88,6 +88,7 @@ void Repaint() {
   }
   
   glFlush();
+  glutSwapBuffers();
 }
 
 //****************************************
@@ -268,7 +269,7 @@ int main(int argc, char** argv){
   glutInitWindowPosition(windowX, windowY);
   glutInitWindowSize(window_width, window_height);
   windowID = glutCreateWindow("Aesthetic Fractals");
-  glClearColor(0, 0, 0, 0);
+  glClearColor(1,1,1,1);
 
   // Enable Blending for transparency
   glShadeModel(GL_SMOOTH);
@@ -289,8 +290,8 @@ int main(int argc, char** argv){
   if (argc < 3) {
     glutFullScreen();
     fullScreen=true;
-    fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
-												   //"sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
+    //    fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
+    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
 
     // set the event handling methods
     glutDisplayFunc(Repaint);
@@ -315,6 +316,7 @@ int main(int argc, char** argv){
       CliffordAttractor ca(argv[i+1], argv[i+2]);
       fractals.push_back(ca);
       Repaint();
+      glutHideWindow();
       ExternalRenderer::outputToImage(argv[i]);
       ca.saveToFile(argv[i]);
       fractals.clear();

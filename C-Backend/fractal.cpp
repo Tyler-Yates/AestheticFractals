@@ -61,7 +61,7 @@ void AttractorFractal::paint() {
   if (!isReady())
     calculate();
   
-  glColor4f(1,1,1,ALPHA);
+  glColor4f(0,0,0,ALPHA);
   glEnableClientState(GL_VERTEX_ARRAY);
   //  glEnableClientState(GL_COLOR_ARRAY);
 

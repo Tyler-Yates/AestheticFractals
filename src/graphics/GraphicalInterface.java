@@ -8,6 +8,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import fractals.Generator;
@@ -22,9 +23,12 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     private static final long serialVersionUID = 749344840243728058L;
 
     public static JFrame frame;
+    public static JLayeredPane selector;
     
     public static boolean needsRedraw = true;
+    public static boolean needsSelectorRedraw = true;
 
+    static int windowWidth = 1024, windowHeight = 768;
     static int mouseX, mouseY; // Mouse location on the screen
 
     private static final double VERSION = 0.00;
@@ -39,9 +43,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         frame = new JFrame("Aesthetic Fractal v" + VERSION);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1900, 1060);
+        frame.setSize(windowWidth, windowHeight);
         frame.addMouseMotionListener(this);
         frame.addMouseListener(this);
+        
         frame.add(this);
     }
 
@@ -64,9 +69,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
             int x = i % 3 * boxWidth;
             int y = i / 3 * boxHeight;
 
-            drawBox(g, x, y, boxWidth, boxHeight);
+            
             drawImage(g, i, x, y);
-            drawSelectedBox(g);
+            drawBox(g, x, y, boxWidth, boxHeight);
         }
     }
 
@@ -91,16 +96,13 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
                 frame.getHeight() / 3 - 2);
     }
 
-    public void paint(Graphics g)
-    {
-        if(needsRedraw)
-        {
-            System.out.println("draw");
-            
+    public void paint(Graphics g) {
+    		if(needsRedraw)
+    		{
             drawInterface(g);
+            drawSelectedBox(g);
             needsRedraw=false;
-        }
-        repaint();
+    		}    		
     }
 
     @Override
@@ -126,6 +128,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
             needsRedraw=true;
             selectedBoxX=l;
             selectedBoxY=t;
+            repaint();
         }
     }
 

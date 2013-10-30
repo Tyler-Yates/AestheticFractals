@@ -36,9 +36,7 @@ public class Generator
 
     public static void drawImage(int index, Graphics g, int x, int y)
     {
-        System.out.print("Drawing index "+index+"'s image...");
         fractals.get(index).drawImage(g, x, y);
-        System.out.println("done!");
         
     }
 }

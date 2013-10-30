@@ -48,7 +48,7 @@ public class Fractal
 
     public void generateImage() throws IOException, InterruptedException
     {
-        System.out.println(x.toString() + "\t|\t" + y.toString());
+        //System.out.println(x.toString() + "\t|\t" + y.toString());
         ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
                 "C-Backend/aesthetics", "-s", "200", "500", IMAGE_PATH + id,
                 x.toString(), y.toString() });
