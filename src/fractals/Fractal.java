@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
@@ -44,6 +45,31 @@ public class Fractal
     {
         this.x = x;
         this.y = y;
+    }
+
+    public Fractal cross(Fractal f) {
+       Equation cloneX = x.clone();
+       Equation cloneY = y.clone();
+       Equation otherCloneX = f.x.clone();
+       Equation otherCloneY = f.y.clone();
+       
+       cloneX.cross(otherCloneX);
+       cloneY.cross(otherCloneY);
+       
+       return new Fractal(cloneX, cloneY);
+    }
+    
+    public Fractal mutate() {
+        Equation cloneX = x.clone();
+        Equation cloneY = y.clone();
+        cloneX.mutate();
+        cloneY.mutate();
+        
+        return new Fractal(cloneX, cloneY);
+    }
+    
+    public Fractal clone() {
+        return this.clone();
     }
 
     public void generateImage() throws IOException, InterruptedException
