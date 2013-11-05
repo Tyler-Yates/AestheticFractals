@@ -130,6 +130,9 @@ public class Equation
             parentOther.setLeft(swap);
         else
             parentOther.setRight(swap);
+
+        swap.setParent(parentOther);
+        swapOther.setParent(parent);
         
         trace();
         updateExpression();
