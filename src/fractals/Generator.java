@@ -16,28 +16,44 @@ public class Generator
     static double crossRatio, mutateRatio, cloneRatio;
     
     static {
-        crossRatio = mutateRatio = cloneRatio = .3;
+        crossRatio = 0.3;
     }
     
     public static void generateNewGeneration()
     {
+        for(int i=0; i<GraphicalInterface.selectedFractals.length; i++)
+        {
+            if(GraphicalInterface.selectedFractals[i])
+                selectedFractals.add(fractals.get(i));
+        }
+        
         fractals.clear();
         
         Fractal newFractal;
         for(int i=0; i<9; i++)
         {
-            if (selectedFractals.size() < 2) {
-                newFractal = new Fractal(Equation.generateRandomXEquation(), Equation.generateRandomYEquation());
+            if (selectedFractals.isEmpty()) {
+                newFractal = new Fractal();
+            }
+            else if (selectedFractals.size() == 1) {
+                newFractal = selectedFractals.get(0).mutate();
             } else {
                 Fractal Parent1 = selectedFractals.get((int)(Math.random()*selectedFractals.size()));
                 Fractal Parent2 = selectedFractals.get((int)(Math.random()*selectedFractals.size()));
             
-                if(i<=9*crossRatio)
+                if(i<=9*crossRatio) {
+                    System.out.println("crossing i=" + i);
                     newFractal = Parent1.cross(Parent2);
-                else if (i<=9*mutateRatio)
+                }
+                else {
+                //else if (i<=9*mutateRatio) {
+                    System.out.println("mutating i=" + i);
                     newFractal = Parent1.mutate();
-                else
+                }
+                /*else {
+                    System.out.println("cloning i=" + i);
                     newFractal = Parent1.clone();
+                }*/
             }
             
             try
@@ -52,7 +68,7 @@ public class Generator
             fractals.add(newFractal);
         }
         
-        GraphicalInterface.needsRedraw=true;
+        selectedFractals.clear();
     }
 
     public static void drawImage(int index, Graphics g, int x, int y)

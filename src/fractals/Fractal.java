@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
@@ -69,7 +67,7 @@ public class Fractal
     }
     
     public Fractal clone() {
-        return this.clone();
+        return new Fractal(x.clone(), y.clone());
     }
 
     public void generateImage() throws IOException, InterruptedException
