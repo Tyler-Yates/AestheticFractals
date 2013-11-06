@@ -141,6 +141,8 @@ public class Equation
         else
             parentOther.setRight(swap);
         
+        swap.setParent(parentOther);
+        swapOther.setParent(parent);
         trace();
         updateExpression();
     }
