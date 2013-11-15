@@ -31,6 +31,14 @@ public class Equation
             
             for(int i=0; i<arr.length; i++)
             {
+                if(arr[i].equals("'"))
+                {
+                    Node n = stack.pop();
+                    n.setValue("-"+n.getValue());
+                    stack.push(n);
+                    continue;
+                }
+                
                 Node n = new Node(arr[i]);
                 nodes.add(n);
                 
@@ -55,7 +63,9 @@ public class Equation
                 }
             }
             root = stack.pop();
+            System.out.print("Creating new equation: ");
             printTree(root);
+            System.out.println();
             trace();
         } catch (UnknownFunctionException e) {
             e.printStackTrace();
@@ -134,12 +144,17 @@ public class Equation
         swap.setParent(parentOther);
         swapOther.setParent(parent);
         
+        swap.setParent(parentOther);
+        swapOther.setParent(parent);
         trace();
         updateExpression();
     }
     
     public Equation clone() {
-        return this.clone();
+        Equation eq = new Equation(new String(expression));
+        eq.root = root.clone();
+        eq.trace();
+        return eq;
     }
     
     public static double randomRange(double start, double end)
@@ -227,8 +242,25 @@ public class Equation
 
     public void mutate()
     {
-        // TODO Auto-generated method stub
+        mutate(root);
+        trace();
+        updateExpression();
+    }
+    
+    public void mutate(Node n)
+    {
+        if (n == null) return;
         
+        if(n.isNumber() && Math.random()<0.25)
+        {
+            double change = randomRange(-0.5,0.5);
+            double val = Double.parseDouble(n.getValue())+change;
+            val%=2;
+            n.setValue(""+val);
+        }
+        
+        mutate(n.getLeft());
+        mutate(n.getRight());
     }
 }
 
@@ -246,6 +278,15 @@ class Node
         this.value=value;
     }
     
+    public boolean isNumber()
+    {
+        try {
+            Double.parseDouble(value);
+        } catch(Exception e) {
+            return false;
+        } return true;
+    }
+
     public Node getParent()
     {
         return parent;
@@ -265,6 +306,11 @@ class Node
     public String getValue()
     {
         return value;
+    }
+    
+    public void setValue(String value)
+    {
+        this.value=value;
     }
     
     public Node setLeft(Node newNode)
@@ -308,5 +354,18 @@ class Node
     
     public String toString() {
         return value;
+    }
+    
+    public Node clone() {
+        Node n = new Node(value);
+        if (left != null) {
+            n.left = left.clone();
+            n.left.setParent(n);
+        }
+        if (right != null) {
+            n.right = right.clone();
+            n.right.setParent(n);
+        }
+        return n;
     }
 }

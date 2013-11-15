@@ -2,6 +2,8 @@ package graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -18,20 +20,19 @@ import fractals.Generator;
  * 
  */
 public class GraphicalInterface extends JPanel implements MouseMotionListener,
-        MouseListener
+        MouseListener, KeyListener
 {
     private static final long serialVersionUID = 749344840243728058L;
 
     public static JFrame frame;
     public static JLayeredPane selector;
     
-    public static boolean needsRedraw = true;
-    public static boolean needsSelectorRedraw = true;
+    public static boolean selectedFractals[] = new boolean[9];
 
     static int windowWidth = 1024, windowHeight = 768;
     static int mouseX, mouseY; // Mouse location on the screen
 
-    private static final double VERSION = 0.00;
+    private static final double VERSION = 0.1;
     
     private static int selectedBoxX,selectedBoxY;
 
@@ -46,7 +47,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         frame.setSize(windowWidth, windowHeight);
         frame.addMouseMotionListener(this);
         frame.addMouseListener(this);
-        
+        frame.addKeyListener(this);
         frame.add(this);
     }
 
@@ -72,6 +73,22 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
             
             drawImage(g, i, x, y);
             drawBox(g, x, y, boxWidth, boxHeight);
+            drawSelectedBoxes(g);
+        }
+    }
+
+    private void drawSelectedBoxes(Graphics g)
+    { 
+        g.setColor(new Color(0, 255, 0, 15));
+        for(int i=0; i<selectedFractals.length; i++)
+        {
+            int x=i%3*frame.getWidth()/3;
+            int y=i/3*frame.getHeight()/3;
+            
+            if(selectedFractals[i])
+            {
+                g.fillRect(x, y, frame.getWidth()/3, frame.getHeight()/3);
+            }
         }
     }
 
@@ -97,12 +114,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     }
 
     public void paint(Graphics g) {
-    		if(needsRedraw)
-    		{
             drawInterface(g);
-            drawSelectedBox(g);
-            needsRedraw=false;
-    		}    		
+            drawSelectedBox(g);	
     }
 
     @Override
@@ -125,7 +138,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         
         if(l!=selectedBoxX | t!=selectedBoxY)
         {
-            needsRedraw=true;
             selectedBoxX=l;
             selectedBoxY=t;
             repaint();
@@ -135,7 +147,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     @Override
     public void mouseClicked(MouseEvent e)
     {
-
+        int x = e.getX();
+        int y = e.getY();
+        
+        mouseX = x - frame.getInsets().left;
+        mouseY = y - frame.getInsets().top;
+        
+        int boxCol = mouseX / (frame.getWidth() / 3);
+        int boxRow = mouseY / (frame.getHeight() / 3);
+        
+        int boxIndex = (boxRow*3) + boxCol;
+        selectedFractals[boxIndex]=!selectedFractals[boxIndex];
+        repaint();
     }
 
     @Override
@@ -160,5 +183,31 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     public void mouseExited(MouseEvent e)
     {
 
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+        if(e.getKeyCode()==KeyEvent.VK_SPACE)
+        {
+            Generator.generateNewGeneration();
+            selectedFractals = new boolean[9];
+            repaint();
+        }
+        
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }
