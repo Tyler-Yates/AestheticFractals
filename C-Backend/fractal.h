@@ -7,6 +7,8 @@
 #include "vec.h"
 #include "bb.h"
 
+void setPrecisionPoints(int points);
+
 class AttractorFractal {
  protected:
   Expression *expressionX;
