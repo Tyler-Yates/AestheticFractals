@@ -55,14 +55,13 @@ public class Generator
                     newFractal = Parent1.clone();
                 }*/
             }
-            
+            //(new ImageGenerator(newFractal)).start();
             try
             {
                 newFractal.generateImage();
             } catch (IOException | InterruptedException e)
             {
-                System.out.println("error");
-                
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             fractals.add(newFractal);
@@ -75,5 +74,27 @@ public class Generator
     {
         fractals.get(index).drawImage(g, x, y);
         
+    }
+}
+
+class ImageGenerator extends Thread
+{
+    Fractal fractal;
+    
+    public ImageGenerator(Fractal f)
+    {
+        fractal=f;
+    }
+    
+    @Override
+    public void run()
+    {
+        try
+        {
+            fractal.generateImage();
+        } catch (IOException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

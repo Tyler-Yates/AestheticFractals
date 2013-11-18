@@ -12,9 +12,15 @@
 #include <GL/glut.h>
 #endif
 
-const int PRECISION_POINTS = 10000;
-const float preAlphaVal = 60000 / (float)PRECISION_POINTS;
-const float ALPHA = (preAlphaVal > 1 ? 1 : preAlphaVal);
+int PRECISION_POINTS = 10000;
+float preAlphaVal = 60000 / (float)PRECISION_POINTS;
+float ALPHA = (preAlphaVal > 1 ? 1 : preAlphaVal);
+
+void setPrecisionPoints(int points) {
+  PRECISION_POINTS = points;
+  preAlphaVal = 60000 / (float)PRECISION_POINTS;
+  ALPHA = (preAlphaVal > 1 ? 1 : preAlphaVal);
+}
 
 void AttractorFractal::calculate() {
   isCalculated = false;
