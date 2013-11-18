@@ -21,7 +21,7 @@ public class ImageManager {
 			try {
 				f.generateImage();
 				imagesReady.set(index, 1);
-				if(GraphicalInterface.frame!=null)
+				if (GraphicalInterface.frame != null)
 					GraphicalInterface.frame.getContentPane().repaint();
 			} catch (IOException | InterruptedException e) {
 				imagesReady.set(index, -1);

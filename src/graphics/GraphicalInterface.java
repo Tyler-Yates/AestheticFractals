@@ -68,10 +68,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 			int y = i / 3 * boxHeight;
 
 			g.setColor(Color.black);
-			if(ImageManager.indexIsReady(i))
+			if (ImageManager.indexIsReady(i))
 				drawImage(g, i, x, y);
 			else
-				g.drawString("Loading...", x+20, y+20);
+				g.drawString("Loading...", x + 20, y + 20);
 			drawBox(g, x, y, boxWidth, boxHeight);
 			drawSelectedBoxes(g);
 		}
