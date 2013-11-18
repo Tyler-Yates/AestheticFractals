@@ -3,10 +3,12 @@ package fractals;
 import graphics.GraphicalInterface;
 
 import java.awt.Graphics;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class Generator {
-	int generation = 0; // The current generation's number
+public class Generator
+{
+    int generation = 0; //The current generation's number
 
 	static ArrayList<Fractal> fractals = new ArrayList<Fractal>(9);// Current
 																	// Fractals
@@ -63,4 +65,26 @@ public class Generator {
 		fractals.get(index).drawImage(g, x, y);
 
 	}
+}
+
+class ImageGenerator extends Thread
+{
+    Fractal fractal;
+    
+    public ImageGenerator(Fractal f)
+    {
+        fractal=f;
+    }
+    
+    @Override
+    public void run()
+    {
+        try
+        {
+            fractal.generateImage();
+        } catch (IOException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

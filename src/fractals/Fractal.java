@@ -3,7 +3,9 @@ package fractals;
 import graphics.GraphicalInterface;
 import graphics.PPMImageReader;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -72,9 +74,9 @@ public class Fractal
 
     public void generateImage() throws IOException, InterruptedException
     {
-        //System.out.println(x.toString() + "\t|\t" + y.toString());
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
-                "C-Backend/aesthetics", "-s", "200", "500", IMAGE_PATH + id,
+                "C-Backend/aesthetics", "-p", "100000", "-s", ""+screenSize.getHeight()/3, ""+screenSize.getWidth()/3, IMAGE_PATH + id,
                 x.toString(), y.toString() });
         Process p = processBuilder.start();
         p.waitFor();
@@ -88,6 +90,6 @@ public class Fractal
 
     public void drawImage(Graphics g, int x, int y)
     {
-        g.drawImage(img, x, y, GraphicalInterface.frame); 
+        g.drawImage(img, x, y, GraphicalInterface.frame.getWidth()/3, GraphicalInterface.frame.getHeight()/3, GraphicalInterface.frame); 
     }
 }

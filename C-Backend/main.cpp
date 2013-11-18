@@ -308,6 +308,10 @@ int main(int argc, char** argv){
     ExternalRenderer::getNewRenderBuffer(&renderbuffer);
     
     for (int i = 1; i < argc - 2; i+=3) {
+      if (strcmp(argv[i],"-p") == 0) {
+	setPrecisionPoints(stoi(argv[++i]));
+	i++;
+      }
       if (strcmp(argv[i],"-s") == 0) {
         resize(stoi(argv[++i]), stoi(argv[++i]));
         i++;
