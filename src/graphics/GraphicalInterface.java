@@ -183,6 +183,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 			Generator.generateNewGeneration();
 			selectedFractals = new boolean[9];
 			repaint();
+		} else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
+		    Generator.decrementGeneration();
+		} else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+		    Generator.incrementGeneration();
 		}
 
 	}
