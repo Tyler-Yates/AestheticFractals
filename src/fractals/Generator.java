@@ -5,87 +5,103 @@ import graphics.GraphicalInterface;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Generator
 {
-    int generation = 0; //The current generation's number
-    
-    static ArrayList<Fractal> fractals = new ArrayList<Fractal>(9);//Current Fractals
+    static int generation = 0; // The current generation's number
+
+    static ArrayList<Fractal> fractals;  // Current Fractals
     static ArrayList<Fractal> selectedFractals = new ArrayList<Fractal>(9);
-    
-    static double crossRatio, mutateRatio, cloneRatio;
-    
-    static {
-        crossRatio = 0.3;
-    }
+
+    static Stack<ArrayList<Fractal> > previous = new Stack<ArrayList<Fractal> >();
+    static Stack<ArrayList<Fractal> > next = new Stack<ArrayList<Fractal> >();
     
     public static void generateNewGeneration()
     {
-        for(int i=0; i<GraphicalInterface.selectedFractals.length; i++)
+        if (fractals != null)
+            previous.push(fractals);
+
+        generation++;
+
+        for (int i = 0; i < GraphicalInterface.selectedFractals.length; i++)
         {
-            if(GraphicalInterface.selectedFractals[i])
+            if (GraphicalInterface.selectedFractals[i])
                 selectedFractals.add(fractals.get(i));
         }
         
-        fractals.clear();
-        
+        fractals = new ArrayList<Fractal>(9);
+
         Fractal newFractal;
-        for(int i=0; i<9; i++)
+        for (int i = 0; i < 9; i++)
         {
-            if (selectedFractals.isEmpty()) {
+            if (selectedFractals.isEmpty())
+            {
                 newFractal = new Fractal();
-            }
-            else if (selectedFractals.size() == 1) {
-                newFractal = selectedFractals.get(0).mutate();
-            } else {
-                Fractal Parent1 = selectedFractals.get((int)(Math.random()*selectedFractals.size()));
-                Fractal Parent2 = selectedFractals.get((int)(Math.random()*selectedFractals.size()));
-            
-                if(i<=9*crossRatio) {
-                    System.out.println("crossing i=" + i);
+            } else
+            {
+                Fractal Parent1 = selectedFractals
+                        .get((int) (Math.random() * selectedFractals.size()));
+                if (i < 3)
+                {
+                    Fractal Parent2 = selectedFractals
+                            .get((int) (Math.random() * selectedFractals.size()));
                     newFractal = Parent1.cross(Parent2);
-                }
-                else {
-                //else if (i<=9*mutateRatio) {
-                    System.out.println("mutating i=" + i);
+                } else if (i < 6)
+                {
                     newFractal = Parent1.mutate();
-                }
-                /*else {
-                    System.out.println("cloning i=" + i);
+                } else
+                {
                     newFractal = Parent1.clone();
-                }*/
-            }
-            //(new ImageGenerator(newFractal)).start();
-            try
-            {
-                newFractal.generateImage();
-            } catch (IOException | InterruptedException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                }
             }
             fractals.add(newFractal);
         }
-        
+
+        ImageManager.generateNewImages(fractals);
+
         selectedFractals.clear();
     }
 
     public static void drawImage(int index, Graphics g, int x, int y)
     {
         fractals.get(index).drawImage(g, x, y);
+    }
+
+    public static void decrementGeneration()
+    {
+        if (previous.isEmpty()) return;
+        generation--;
         
+        if (fractals != null)
+            next.push(fractals);
+        
+        fractals = previous.pop();
+        GraphicalInterface.frame.getContentPane().repaint();
+    }
+
+    public static void incrementGeneration()
+    {
+        if (next.isEmpty()) return;
+        generation++;
+        
+        if (fractals != null)
+            previous.push(fractals);
+        
+        fractals = next.pop();
+        GraphicalInterface.frame.getContentPane().repaint();
     }
 }
 
 class ImageGenerator extends Thread
 {
     Fractal fractal;
-    
+
     public ImageGenerator(Fractal f)
     {
-        fractal=f;
+        fractal = f;
     }
-    
+
     @Override
     public void run()
     {
