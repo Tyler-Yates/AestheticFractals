@@ -69,10 +69,10 @@ public class Fractal {
 	public void generateImage() throws IOException, InterruptedException {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
-				"C-Backend/aesthetics", "-p", "100000", "-s",
-				"" + screenSize.getHeight() / 3,
-				"" + screenSize.getWidth() / 3, IMAGE_PATH + id, x.toString(),
-				y.toString() });
+                        "C-Backend/aesthetics", "-save", "-p", "100000", "-s",
+                        "" + screenSize.getHeight() / 3,
+                        "" + screenSize.getWidth() / 3, IMAGE_PATH + id, x.toString(),
+                        y.toString() });
 		Process p = processBuilder.start();
 		p.waitFor();
 		p.destroy();

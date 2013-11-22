@@ -12,7 +12,7 @@
 #include <GL/glut.h>
 #endif
 
-int PRECISION_POINTS = 10000;
+int PRECISION_POINTS = 1000000;
 float preAlphaVal = 60000 / (float)PRECISION_POINTS;
 float ALPHA = (preAlphaVal > 1 ? 1 : preAlphaVal);
 
