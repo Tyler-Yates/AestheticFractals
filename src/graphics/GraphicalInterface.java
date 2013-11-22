@@ -2,6 +2,8 @@ package graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -11,8 +13,12 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
+import fractals.Fractal;
 import fractals.Generator;
 import fractals.ImageManager;
 
@@ -21,7 +27,7 @@ import fractals.ImageManager;
  * 
  */
 public class GraphicalInterface extends JPanel implements MouseMotionListener,
-		MouseListener, KeyListener {
+		MouseListener, KeyListener, ActionListener {
 	private static final long serialVersionUID = 749344840243728058L;
 
 	public static JFrame frame;
@@ -34,8 +40,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
 	private static final double VERSION = 0.1;
 
-	private static int selectedBoxX, selectedBoxY;
-
+	private static int selectedBoxX, selectedBoxY, menuOpenForFractalNum;
+	
 	/**
 	 * Initializes the JFrame
 	 */
@@ -89,6 +95,14 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 		}
 	}
 
+	private void drawPopupForFractal(MouseEvent e, int boxIndex) {
+		JPopupMenu menu = new JPopupMenu();
+		JMenuItem renderItem = new JMenuItem("Render fractal");
+		renderItem.addActionListener(this);
+		menu.add(renderItem);
+		menu.show(e.getComponent(), e.getX(), e.getY());
+	}
+	
 	public void drawBox(Graphics g, int x, int y, int width, int height) {
 		g.setColor(Color.black);
 		g.drawRect(x, y, width, height);
@@ -147,7 +161,13 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 		int boxRow = mouseY / (frame.getHeight() / 3);
 
 		int boxIndex = (boxRow * 3) + boxCol;
-		selectedFractals[boxIndex] = !selectedFractals[boxIndex];
+
+        if (SwingUtilities.isRightMouseButton(e)) {
+            drawPopupForFractal(e, boxIndex);
+            menuOpenForFractalNum = boxIndex;
+        } else {
+        	selectedFractals[boxIndex] = !selectedFractals[boxIndex];
+        }
 		repaint();
 	}
 
@@ -158,7 +178,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
 	}
 
 	@Override
@@ -195,5 +214,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getActionCommand().equals("Render fractal")) {
+			try {
+				Generator.renderFractalInGL(menuOpenForFractalNum);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 	}
 }

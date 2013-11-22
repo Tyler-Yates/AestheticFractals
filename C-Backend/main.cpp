@@ -340,13 +340,11 @@ int main(int argc, char** argv){
         CliffordAttractor ca(argv[i], argv[i+1]);
         fractals.push_back(ca);
       }
-      
       glutInit();
     }
   } else {
     fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
     //fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
-      
     glutInit();
   }
   

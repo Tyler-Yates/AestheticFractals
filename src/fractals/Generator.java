@@ -16,6 +16,11 @@ public class Generator
 
     static Stack<ArrayList<Fractal> > previous = new Stack<ArrayList<Fractal> >();
     static Stack<ArrayList<Fractal> > next = new Stack<ArrayList<Fractal> >();
+
+    public static void renderFractalInGL(int i) throws IOException {
+    	if (fractals == null || i >= fractals.size()) return;
+    	fractals.get(i).renderInGL();
+    }
     
     public static void generateNewGeneration()
     {
@@ -91,6 +96,7 @@ public class Generator
         fractals = next.pop();
         GraphicalInterface.frame.getContentPane().repaint();
     }
+    
 }
 
 class ImageGenerator extends Thread

@@ -84,6 +84,13 @@ public class Fractal {
 		f.delete();
 	}
 
+	public void renderInGL() throws IOException {
+		ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
+			"C-Backend/aesthetics", x.toString(), y.toString()	
+		});
+		Process p = processBuilder.start();
+	}
+	
 	public void drawImage(Graphics g, int x, int y) {
 		g.drawImage(img, x, y, GraphicalInterface.frame.getWidth() / 3,
 				GraphicalInterface.frame.getHeight() / 3,
