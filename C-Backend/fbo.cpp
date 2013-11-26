@@ -1,9 +1,7 @@
 #include <iostream>
 
 #include "fbo.h"
-#include "libs/CImg-1.5.6/CImg.h"
-
-using namespace cimg_library;
+#include "libs/libpng-1.2.50/png.h"
 
 int image_width = 1024, image_height = 1024;
 GLuint framebuffer;
@@ -92,27 +90,7 @@ void ExternalRenderer::deleteRenderBuffer(GLuint *renderbuffer) {
   glDeleteRenderbuffers(1, renderbuffer);
 }
 
-void convertToNonInterleaved(int w, int h, unsigned char* tangled, unsigned char* untangled) {
-  //Take string in format R1 G1 B1 R2 G2 B2... and re-write it 
-  //in the format format R1 R2 G1 G2 B1 B2... 
-  //Assume 8 bit values for red, green and blue color channels.
-  //Assume there are no other channels
-  //tangled is a pointer to the input string and untangled 
-  //is a pointer to the output string. This method assumes that 
-  //memory has already been allocated for the output string.
-
-  int numPixels = w*h;
-  int numColors = 3;
-  for(int i=0; i<numPixels; ++i) {
-    int indexIntoInterleavedTuple = numColors*i;
-    //Red
-    untangled[i] = tangled[indexIntoInterleavedTuple];
-    //Green
-    untangled[numPixels+i] = tangled[indexIntoInterleavedTuple+1];
-    //Blue
-    untangled[2*numPixels+i] = tangled[indexIntoInterleavedTuple+2];
-  }
-}
+bool saveToPNG(string filename, GLubyte *buffer);
 
 void ExternalRenderer::outputToImage(string name) {
   cout << "saving img" << endl;
@@ -122,11 +100,73 @@ void ExternalRenderer::outputToImage(string name) {
   GLubyte *buffer = (GLubyte *)malloc(bytes);
   GLubyte *untangled = (GLubyte *)malloc(bytes);
   glReadPixels(0, 0, image_width, image_height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-  convertToNonInterleaved(image_width, image_height, buffer, untangled);
-  CImg<GLubyte> img(untangled,image_width,image_height,1,3,false);
-  string filename = name + ".ppm";
-  string metafilename = name + ".ppm.info";
-  img.save(filename.c_str());
+  string filename = name + ".png";
 
+  saveToPNG(filename, buffer);
+  free(buffer);
+  free(untangled);
   cout << "saved to " + filename << endl;
+}
+
+void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+  FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
+  fwrite((void*) data, 1, length, fp);
+}
+
+bool saveToPNG(string filename, GLubyte *buffer) {
+  FILE* out;
+  out = fopen(filename.c_str(), "wb");
+  if (out == NULL)
+    {
+      cout << "Can't open screen capture file " << filename.c_str() << endl;
+      return false;
+    }
+
+  int rowStride = (image_width * 3 + 3) & ~0x3;
+
+  png_bytep* row_pointers = new png_bytep[image_height];
+  for (int i = 0; i < image_height; i++)
+    row_pointers[i] = (png_bytep) &buffer[rowStride * (image_height - i - 1)];
+
+  png_structp png_ptr;
+  png_infop info_ptr;
+
+  png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                                    NULL, NULL, NULL);
+
+  if (png_ptr == NULL)
+    {
+      cout << "Screen capture: error allocating png_ptr" << endl;
+      fclose(out);
+      return false;
+    }
+
+  info_ptr = png_create_info_struct(png_ptr);
+  if (info_ptr == NULL)
+    {
+      cout << "Screen capture: error allocating info_ptr" << endl;
+      fclose(out);
+      png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
+      return false;
+    }
+
+  png_set_write_fn(png_ptr, (void*) out, PNGWriteData, NULL);
+
+  png_set_compression_level(png_ptr, 5);
+  png_set_IHDR(png_ptr, info_ptr,
+               image_width, image_height,
+               8,
+               PNG_COLOR_TYPE_RGB,
+               PNG_INTERLACE_NONE,
+               PNG_COMPRESSION_TYPE_DEFAULT,
+               PNG_FILTER_TYPE_DEFAULT);
+
+  png_write_info(png_ptr, info_ptr);
+  png_write_image(png_ptr, row_pointers);
+  png_write_end(png_ptr, info_ptr);
+
+  // Clean up everything . . .
+  png_destroy_write_struct(&png_ptr, &info_ptr);
+  fclose(out);
 }

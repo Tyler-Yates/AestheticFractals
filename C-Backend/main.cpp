@@ -280,6 +280,7 @@ int main(int argc, char** argv){
   GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
   glutInitWindowPosition(windowX, windowY);
   glutInitWindowSize(window_width, window_height);
+  
   windowID = glutCreateWindow("Aesthetic Fractals");
   glClearColor(1,1,1,1);
 

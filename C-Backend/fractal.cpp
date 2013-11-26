@@ -13,7 +13,7 @@
 #endif
 
 int PRECISION_POINTS = 1000000;
-float preAlphaVal = 60000 / (float)PRECISION_POINTS;
+float preAlphaVal = 90000 / (float)PRECISION_POINTS;
 float ALPHA = (preAlphaVal > 1 ? 1 : preAlphaVal);
 
 void setPrecisionPoints(int points) {
@@ -73,6 +73,7 @@ void AttractorFractal::paint() {
 
   glVertexPointer(3, GL_FLOAT, sizeof(Vec3f), points.data());
   //  glColorPointer(4, GL_FLOAT, sizeof(Vec4f), colors.data());
+
   glDrawArrays(GL_POINTS, 0, getNumPoints());
 
   // deactivate vertex arrays after drawing
