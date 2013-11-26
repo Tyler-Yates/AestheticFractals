@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
@@ -77,10 +79,8 @@ public class Fractal {
 		p.waitFor();
 		p.destroy();
 
-		File f = new File(IMAGE_PATH + id + ".ppm");
-		ImageInputStream inputStream = new FileImageInputStream(f);
-		img = reader.read(inputStream);
-		inputStream.close();
+		File f = new File(IMAGE_PATH + id + ".png");
+		img = ImageIO.read(f);
 		f.delete();
 	}
 
