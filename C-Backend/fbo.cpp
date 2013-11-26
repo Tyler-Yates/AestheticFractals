@@ -7,6 +7,9 @@ int image_width = 1024, image_height = 1024;
 GLuint framebuffer;
 GLuint status;
 
+void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length);
+bool saveToPNG(string filename, GLubyte *buffer);
+
 void ExternalRenderer::setImageWidth(int width) {
   image_width = width;
 }
@@ -90,26 +93,22 @@ void ExternalRenderer::deleteRenderBuffer(GLuint *renderbuffer) {
   glDeleteRenderbuffers(1, renderbuffer);
 }
 
-bool saveToPNG(string filename, GLubyte *buffer);
-
 void ExternalRenderer::outputToImage(string name) {
   cout << "saving img" << endl;
 
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
   int bytes = image_width*image_height*3; //Color space is RGB
   GLubyte *buffer = (GLubyte *)malloc(bytes);
-  GLubyte *untangled = (GLubyte *)malloc(bytes);
   glReadPixels(0, 0, image_width, image_height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-  string filename = name + ".png";
 
+  string filename = name + ".png";
   saveToPNG(filename, buffer);
   free(buffer);
-  free(untangled);
+
   cout << "saved to " + filename << endl;
 }
 
-void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
-{
+void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length) {
   FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
   fwrite((void*) data, 1, length, fp);
 }

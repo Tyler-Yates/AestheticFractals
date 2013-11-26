@@ -1,7 +1,6 @@
 package fractals;
 
 import graphics.GraphicalInterface;
-import graphics.PPMImageReader;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -13,13 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.ImageInputStream;
 
 public class Fractal {
 	Equation x, y;
 	BufferedImage img;
-	static final PPMImageReader reader = new PPMImageReader(null);
 
 	static {
 		try {
