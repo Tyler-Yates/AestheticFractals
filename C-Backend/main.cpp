@@ -282,7 +282,7 @@ int main(int argc, char** argv){
   glutInitWindowSize(window_width, window_height);
   
   windowID = glutCreateWindow("Aesthetic Fractals");
-  glClearColor(1,1,1,1);
+  glClearColor(0,0,0,1);
 
   // Enable Blending for transparency
   glShadeModel(GL_SMOOTH);

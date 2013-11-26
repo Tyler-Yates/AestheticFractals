@@ -1,6 +1,7 @@
 package graphics;
 
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +43,13 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
 	private static int selectedBoxX, selectedBoxY, menuOpenForFractalNum;
 	
+	private static Color bgColor       = Color.black;
+	private static Color fgColor       = Color.white;
+	private static Color selectedColor = new Color(0, 255, 0, 15);
+	private static Color hoverColor    = new Color(255, 255, 255, 15);
+	
+	private static boolean fullScreen = false;
+	
 	/**
 	 * Initializes the JFrame
 	 */
@@ -62,8 +70,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 		new GraphicalInterface();
 	}
 
+	public static void toggleFullScreen() {
+		if (fullScreen) {
+			frame.setExtendedState(Frame.NORMAL);
+		} else {
+			frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);  
+		}
+		
+		fullScreen = !fullScreen;
+	}
+	
 	public void drawInterface(Graphics g) {
-		g.setColor(Color.white);
+		g.setColor(bgColor);
 		g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
 		int boxWidth = frame.getWidth() / 3;
@@ -73,7 +91,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 			int x = i % 3 * boxWidth;
 			int y = i / 3 * boxHeight;
 
-			g.setColor(Color.black);
+			g.setColor(fgColor);
 			if (ImageManager.indexIsReady(i))
 				drawImage(g, i, x, y);
 			else
@@ -84,7 +102,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	}
 
 	private void drawSelectedBoxes(Graphics g) {
-		g.setColor(new Color(0, 255, 0, 15));
+		g.setColor(selectedColor);
 		for (int i = 0; i < selectedFractals.length; i++) {
 			int x = i % 3 * frame.getWidth() / 3;
 			int y = i / 3 * frame.getHeight() / 3;
@@ -104,7 +122,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	}
 	
 	public void drawBox(Graphics g, int x, int y, int width, int height) {
-		g.setColor(Color.black);
+		g.setColor(fgColor);
 		g.drawRect(x, y, width, height);
 	}
 
@@ -116,7 +134,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 		int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
 		int t = mouseY / (frame.getHeight() / 3) * (frame.getHeight() / 3);
 
-		g.setColor(new Color(0, 0, 255, 15));
+		g.setColor(hoverColor);
 		g.fillRect(l + 1, t + 1, frame.getWidth() / 3 - 2,
 				frame.getHeight() / 3 - 2);
 	}
@@ -206,6 +224,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 		    Generator.decrementGeneration();
 		} else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
 		    Generator.incrementGeneration();
+		} else if(e.getKeyCode()==KeyEvent.VK_F) {
+			toggleFullScreen();
 		}
 
 	}
