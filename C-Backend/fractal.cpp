@@ -75,7 +75,7 @@ void AttractorFractal::calculate() {
 void AttractorFractal::paint() {
   if (!isReady())
     calculate();
-  
+
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
 

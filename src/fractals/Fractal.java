@@ -83,7 +83,7 @@ public class Fractal {
 
 	public void renderInGL() throws IOException {
 		ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
-			"C-Backend/aesthetics", x.toString(), y.toString(), "0", "1", "1", "1"
+			"C-Backend/aesthetics", x.toString(), y.toString(), "x", "x", "y", "z"
 		});
 		Process p = processBuilder.start();
 	}
