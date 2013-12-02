@@ -6,3 +6,4 @@ aesthetics
 *.classpath
 *#
 images/
+*.png
