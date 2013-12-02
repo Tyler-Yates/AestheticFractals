@@ -298,22 +298,25 @@ int main(int argc, char** argv){
       ExternalRenderer::switchToExternalTarget();
       GLuint renderbuffer;
       ExternalRenderer::getNewRenderBuffer(&renderbuffer);
-      
+      glutHideWindow();
+
       for (int i = 2; i <= argc - 7; i+=7) {
         if (strcmp(argv[i],"-p") == 0) {
           setPrecisionPoints(stoi(argv[++i]));
           i++;
         }
+
         if (strcmp(argv[i],"-s") == 0) {
           int width = stoi(argv[++i]);
           int height = stoi(argv[++i]);
           resize(width, height);
           i++;
         }
-        
+
         // Calculate points and draw
         CliffordAttractor ca(argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5], argv[i+6]);
         fractals.push_back(ca);
+
         Repaint();
         glutHideWindow();
 

@@ -42,7 +42,12 @@ public class Generator
         {
             if (selectedFractals.isEmpty())
             {
-                newFractal = new Fractal();
+            	if (i == 0) {
+            		newFractal = new Fractal(new Equation("sin(-1.4 * y) + cos(-1.4 * x)"), new Equation("sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
+            	}
+            	else {
+            		newFractal = new Fractal();
+            	}
             } else
             {
                 Fractal Parent1 = selectedFractals

@@ -68,7 +68,7 @@ public class Fractal {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		ProcessBuilder processBuilder = new ProcessBuilder(new String[] {
                         "C-Backend/aesthetics", "-save", "-p", "100000", 
-                        "-s", "" + screenSize.getHeight() / 3, "" + screenSize.getWidth() / 3, 
+                        "-s", "" + screenSize.getWidth() / 3, "" + screenSize.getHeight() / 3, 
                         IMAGE_PATH + id, 
                         x.toString(), y.toString(), "0",
                         "1", "1", "1" });
