@@ -30,7 +30,7 @@ void AttractorFractal::calculate() {
   x = y = z = 0.0;
   r = g = b = 1.0;
   
-  vector<double> vals = {x, y, z};
+  vector<double> vals = {x, y, z, r, g, b};
   for (int i=0; i < PRECISION_POINTS; i++) {
     vals[0] = x;
     vals[1] = y;
@@ -51,11 +51,20 @@ void AttractorFractal::calculate() {
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
 
+    if (expressionR) 
+      r = expressionR->evaluate(vals);
+
+    if (expressionG) 
+      g = expressionG->evaluate(vals);
+
+    if (expressionB) 
+      b = expressionB->evaluate(vals);
+    
 
     Vec3f p = {(float)x, (float)y, (float)z};
     
     points.push_back(p);
-    //    colors.push_back(Vec4f{r,g,b, ALPHA});
+    colors.push_back(Vec4f{r,g,b,ALPHA});
   }
 
   bb.min = Vec3f::makeVec(minX, minY, minZ);
@@ -67,18 +76,17 @@ void AttractorFractal::paint() {
   if (!isReady())
     calculate();
   
-  glColor4f(1,1,1,ALPHA);
   glEnableClientState(GL_VERTEX_ARRAY);
-  //  glEnableClientState(GL_COLOR_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
 
   glVertexPointer(3, GL_FLOAT, sizeof(Vec3f), points.data());
-  //  glColorPointer(4, GL_FLOAT, sizeof(Vec4f), colors.data());
+  glColorPointer(4, GL_FLOAT, sizeof(Vec4f), colors.data());
 
   glDrawArrays(GL_POINTS, 0, getNumPoints());
 
   // deactivate vertex arrays after drawing
   glDisableClientState(GL_VERTEX_ARRAY);
-  //  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
 
 }
 

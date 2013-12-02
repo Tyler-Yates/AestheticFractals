@@ -73,19 +73,11 @@ void Repaint() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the screen buffer
 
   int size = fractals.size();
-  if (size == 1) {
-    //    glViewport(0, 0, window_width, window_height);
-    adjustBounds(fractals[0]);
-    fractals[0].paint();
-  } else {
-    //    for (int i = 0; i <= size / 2; i++) {
-      //      for (int j = 0; j < (size+1) / 2; j++) {
-        //        glViewport(j*window_width/((size+1)/2),i*window_height/(size), window_width/((size+1)/2), window_height/(size));
-    for (int i = 0; i < size; i++) {
-      adjustBounds(fractals[i]);
-      fractals[i].paint();
-    }
+  for (int i = 0; i < size; i++) {
+    adjustBounds(fractals[i]);
+    fractals[i].paint();
   }
+
   glFlush();
   glutSwapBuffers();
 }
@@ -307,28 +299,34 @@ int main(int argc, char** argv){
       GLuint renderbuffer;
       ExternalRenderer::getNewRenderBuffer(&renderbuffer);
       
-      for (int i = 2; i < argc - 2; i+=3) {
+      for (int i = 2; i <= argc - 7; i+=7) {
         if (strcmp(argv[i],"-p") == 0) {
           setPrecisionPoints(stoi(argv[++i]));
           i++;
         }
         if (strcmp(argv[i],"-s") == 0) {
-          resize(stoi(argv[++i]), stoi(argv[++i]));
+          int width = stoi(argv[++i]);
+          int height = stoi(argv[++i]);
+          resize(width, height);
           i++;
         }
         
-        CliffordAttractor ca(argv[i+1], argv[i+2]);
+        // Calculate points and draw
+        CliffordAttractor ca(argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5], argv[i+6]);
         fractals.push_back(ca);
         Repaint();
         glutHideWindow();
+
+        // save Image
         ExternalRenderer::outputToImage(argv[i]);
         ca.saveToFile(argv[i]);
         fractals.clear();
       }
       
       ExternalRenderer::deleteRenderBuffer(&renderbuffer);      
+
     } else {
-      for (int i = 1; i <= argc - 2; i+=3) {
+      for (int i = 1; i <= argc - 6; i+=6) {
         if (strcmp(argv[i],"-p") == 0) {
           setPrecisionPoints(stoi(argv[++i]));
           i++;
@@ -338,39 +336,19 @@ int main(int argc, char** argv){
           i++;
         }
         
-        CliffordAttractor ca(argv[i], argv[i+1]);
+        CliffordAttractor ca(argv[i], argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5]);
         fractals.push_back(ca);
       }
       glutInit();
     }
   } else {
-    fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
+    fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)", "0", "x", "y", "z"));
     //fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
     glutInit();
   }
   
   return 0;
 }
-
-/*void adjustBounds(AttractorFractal f) {
-  glMatrixMode (GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(40.0, window_width/window_height, 1, 1500);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  BoundingBox bbox = f.getbb();
-  float maxDist = (bbox.max-bbox.min).max();
-  Vec3f eye = Vec3f::makeVec(0.0f*maxDist, 0.0f*maxDist, 1.5f*maxDist);
-  gluLookAt(eye[0]*zoom, eye[1]*zoom, eye[2]*zoom,
-            0, 0, 0,
-            0, 1, 0);
-
-  glMultMatrixf(rot_matrix);
-
-  // Move the origin up 
-  // glTranslatef(0, -maxDist/8, 0);
-  }*/
 
 void adjustBounds(AttractorFractal f) {
   glMatrixMode(GL_PROJECTION);

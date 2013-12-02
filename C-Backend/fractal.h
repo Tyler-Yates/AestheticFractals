@@ -11,9 +11,8 @@ void setPrecisionPoints(int points);
 
 class AttractorFractal {
  protected:
-  Expression *expressionX;
-  Expression *expressionY;
-  Expression *expressionZ;
+  Expression *expressionX, *expressionY, *expressionZ;
+  Expression *expressionR, *expressionG, *expressionB;
 
   double minX, minY, maxX, maxY, minZ, maxZ;
   BoundingBox bb;
@@ -24,21 +23,22 @@ class AttractorFractal {
  public:
   AttractorFractal() { }
 
-  AttractorFractal(string x, string y, string z = "") {
-    vector<string> vars = {"x", "y", "z"};
+  AttractorFractal(string x, string y, string z = "0", string r = "1", string g = "1", string b = "1") {
+    vector<string> vars = {"x", "y", "z", "r", "g", "b"};
 
     expressionX = new Expression(x, vector<string>(), vars);
     expressionY = new Expression(y, vector<string>(), vars);
-    if (z != "")
-      expressionZ = new Expression(z, vector<string>(), vars);
-    else
-      expressionZ = 0;
+    expressionZ = new Expression(z, vector<string>(), vars);
+    expressionR = new Expression(r, vector<string>(), vars);
+    expressionG = new Expression(g, vector<string>(), vars);
+    expressionB = new Expression(b, vector<string>(), vars);
 
     clear();
     calculate();
   }
   
- AttractorFractal(Expression* ex, Expression* ey, Expression* ez = 0): expressionX(ex), expressionY(ey) {
+ AttractorFractal(Expression* ex, Expression* ey, Expression* ez = 0, Expression* er = 0, Expression* eg = 0, Expression* eb = 0)
+   : expressionX(ex), expressionY(ey), expressionZ(ez), expressionR(er), expressionG(eg), expressionB(eb) {
     clear();
     calculate();
   }
@@ -57,16 +57,16 @@ class CliffordAttractor : public AttractorFractal {
   vector<string> consts;
   vector<float> constVals;
 
- CliffordAttractor(string x, string y, string z = "") : AttractorFractal() {
+  CliffordAttractor(string x, string y, string z = "0", string r = "1", string g = "1", string b = "1") : AttractorFractal() {
     consts = {"a", "b", "c", "d"};
-    vector<string> vars = {"x", "y", "z"};
+    vector<string> vars = {"x", "y", "z", "r", "g", "b"};
 
     expressionX = new Expression(x, consts, vars);
     expressionY = new Expression(y, consts, vars);
-    if (z != "")
-      expressionZ = new Expression(z, consts, vars);
-    else
-      expressionZ = 0;
+    expressionZ = new Expression(z, consts, vars);
+    expressionR = new Expression(r, consts, vars);
+    expressionG = new Expression(g, consts, vars);
+    expressionB = new Expression(b, consts, vars);
 
     clear();
     constructConstants();
