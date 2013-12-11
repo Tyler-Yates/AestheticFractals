@@ -57,7 +57,7 @@ class CliffordAttractor : public AttractorFractal {
   vector<string> consts;
   vector<float> constVals;
 
-  CliffordAttractor(string x, string y, string z = "0", string r = "1", string g = "1", string b = "1") : AttractorFractal() {
+  CliffordAttractor(string x, string y, string z = "0", string r = "1", string g = "1", string b = "255") : AttractorFractal() {
     consts = {"a", "b", "c", "d"};
     vector<string> vars = {"x", "y", "z", "r", "g", "b"};
 

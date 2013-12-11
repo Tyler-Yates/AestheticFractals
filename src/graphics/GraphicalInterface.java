@@ -39,7 +39,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	static int windowWidth = 1024, windowHeight = 768;
 	static int mouseX, mouseY; // Mouse location on the screen
 
-	private static final double VERSION = 0.1;
+	private static final double VERSION = 0.8;
 
 	private static int selectedBoxX, selectedBoxY, menuOpenForFractalNum;
 	
@@ -238,12 +238,12 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		// TODO Add menu option to save png and info file with specified filename
+		
 		if (e.getActionCommand().equals("Render fractal")) {
 			try {
 				Generator.renderFractalInGL(menuOpenForFractalNum);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}

@@ -24,8 +24,8 @@ endif
 
 ###########################################################
 
-aesthetics: main.o expression.o expressionParser.o fractal.o fbo.o
-	${CC} ${CFLAGS} $(INCLUDE) -o aesthetics main.o expression.o fractal.o expressionParser.o fbo.o ${LIBDIR} ${LIBS}
+aesthetics: main.o expression.o expressionParser.o fractal.o fbo.o color.o
+	${CC} ${CFLAGS} $(INCLUDE) -o aesthetics main.o expression.o fractal.o expressionParser.o fbo.o color.o ${LIBDIR} ${LIBS}
 
 main.o: main.cpp expression.h fractal.h common.h
 	${CC} -c ${CFLAGS} $(INCLUDE) main.cpp
@@ -41,6 +41,9 @@ expressionParser.o: libs/expressionParser.cpp libs/expressionParser.h
 
 fbo.o: fbo.cpp fbo.h common.h
 	${CC} -c ${CFLAGS} $(INCLUDE) fbo.cpp
+
+color.o: color.cpp common.h
+	${CC} -c ${CFLAGS} $(INCLUDE) color.cpp
 
 clean:
 	rm -f aesthetics *.o *~ *# *.gch

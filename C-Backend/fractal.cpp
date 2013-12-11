@@ -51,7 +51,7 @@ void AttractorFractal::calculate() {
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
 
-    if (expressionR) 
+    if (expressionR)
       r = expressionR->evaluate(vals);
 
     if (expressionG) 

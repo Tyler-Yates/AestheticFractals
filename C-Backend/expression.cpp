@@ -59,9 +59,11 @@ double Expression::evaluate(vector<double> values) {
 
 double Expression::evalTree(Node *n, vector<double> values) {
   if (!n) return -1;
-
+  
   string token = n->getValue();
-  if (n->isLeaf()) {
+
+  if (n->isVar()) {
+    // Variable e.g. x,y,z or Const e.g. a,b,c,d...  
     for (int i = 0; i < numVars; i++) {
       if (token == vars[i]) 
         return values[i];
@@ -70,23 +72,27 @@ double Expression::evalTree(Node *n, vector<double> values) {
       if (token == consts[i])
         return constVals[i];
     }
-    
+
+  } else if (n->isNum()) {
+    // Hardcoded constant e.g. 1.4
     return stod(token);
-  }
-  
-  if (n->isBinaryOp()) {
+    
+  } else if (n->isBinaryOp()) {
+    // Binary Operator on left and right child
     if (token == "+")      return evalTree(n->getLeft(), values) + evalTree(n->getRight(), values);
     else if (token == "-") return evalTree(n->getLeft(), values) - evalTree(n->getRight(), values);
     else if (token == "/") return evalTree(n->getLeft(), values) / evalTree(n->getRight(), values);
     else if (token == "*") return evalTree(n->getLeft(), values) * evalTree(n->getRight(), values);
     else if (token == "^") return pow(evalTree(n->getLeft(), values), evalTree(n->getRight(), values));
+
   } else if (n->isUnaryOp()) {
+    // Unary Operator on right child
     if (token == "sin")       return sin(evalTree(n->getRight(), values));
     else if (token == "cos")  return cos(evalTree(n->getRight(), values));
     else if (token == "tan")  return tan(evalTree(n->getRight(), values));
     else if (token == "abs")  return abs(evalTree(n->getRight(), values));
   }
-
+  
   return 0.0;
 }
 

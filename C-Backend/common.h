@@ -28,4 +28,14 @@ struct Color {
   GLfloat c[4];
 };
 
+extern Color kRed;
+extern Color kGreen;
+extern Color kBlue;
+extern Color kYellow;
+extern Color kViolet;
+extern Color kBrown;
+extern Color kOrange;
+extern Color kBlack;
+extern Color kWhite;
+
 #endif
