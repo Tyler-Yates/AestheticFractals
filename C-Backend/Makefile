@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -g -std=c++11  # Use -std=c++0x for versions of gcc and g++ <4.7, c++11 otherwise
 INCLUDE =
 LIBDIR =
-LIBS = -lpng -lglut -lGLU -lm -lGLEW -lX11 #-lGL
+LIBS = -lpng -lglut -lGLU -lm -lX11 -lGLEW -lGL #-lglfw3 -lX11 -lXi -lXxf86vm -lXrandr
 
 ###########################################################
 # Options if compiling on Mac

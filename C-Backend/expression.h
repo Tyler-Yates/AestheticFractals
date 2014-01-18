@@ -30,13 +30,14 @@ class Node {
       type = TYPE_BINARY;
     } else {
       char* fail;
-      long l = strtol(value.c_str(), &fail, 10);
+      constval = strtod(value.c_str(), &fail);
       type = (*fail != '\0' ? TYPE_VAR : TYPE_NUM);
     }
   }
   
  private:
   string value;
+  double constval = 0;
   Node *left, *right;
   int type;
     
@@ -53,6 +54,7 @@ class Node {
   }
   
   string getValue() { return value; }
+  double getConstVal() { return constval; }
   Node *getLeft() { return left; }
   Node *getRight() { return right; }
   

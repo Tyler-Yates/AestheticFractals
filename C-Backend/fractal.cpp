@@ -62,9 +62,10 @@ void AttractorFractal::calculate() {
     
 
     Vec3f p = {(float)x, (float)y, (float)z};
-    
+    Vec4f c = {(float)r, (float)g, (float)b, ALPHA};
+
     points.push_back(p);
-    colors.push_back(Vec4f{r,g,b,ALPHA});
+    colors.push_back(c);
   }
 
   bb.min = Vec3f::makeVec(minX, minY, minZ);
@@ -102,11 +103,37 @@ void AttractorFractal::saveToFile(string name) {
   std::streambuf *coutbuf = cout.rdbuf();
   cout.rdbuf(out.rdbuf());
 
+  printInfo();
+  cout.rdbuf(coutbuf);
+}
+
+void AttractorFractal::printInfo() {
+  cout << "ExpressionX: ";
   expressionX->printInfixString();
   expressionX->printConstants();
+  cout << "ExpressionY: ";
   expressionY->printInfixString();
   expressionY->printConstants();
-  cout.rdbuf(coutbuf);
+  if (expressionZ) {
+    cout << "ExpressionZ: ";
+    expressionZ->printInfixString();
+    expressionZ->printConstants();
+  }
+  if (expressionR) {
+    cout << "ExpressionR: ";
+    expressionR->printInfixString();
+    expressionR->printConstants();
+  }
+  if (expressionG) {
+    cout << "ExpressionG: ";
+    expressionG->printInfixString();
+    expressionG->printConstants();
+  }
+  if (expressionB) {
+    cout << "ExpressionB: ";
+    expressionB->printInfixString();
+    expressionB->printConstants();
+  }
 }
 
 void CliffordAttractor::constructConstants() {
@@ -122,22 +149,13 @@ void CliffordAttractor::constructConstants() {
   
   for (int i = 0; i < expressionX->numConsts; i++) 
     expressionX->constVals.push_back( constVals[i] );
-
+  
   for (int i = 0; i < expressionY->numConsts; i++)
     expressionY->constVals.push_back( constVals[i] );
-
+  
   if (expressionZ) {
     for (int i = 0; i < expressionY->numConsts; i++)
       expressionZ->constVals.push_back( constVals[i] );
-  }
-
-  cout << "ExpressionX: ";
-  expressionX->printRPN();
-  cout << "ExpressionY: ";
-  expressionY->printRPN();
-  if (expressionZ) {
-  cout << "ExpressionZ: ";
-  expressionZ->printRPN();
   }
 
     /* Constants evaluation

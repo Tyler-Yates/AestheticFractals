@@ -75,7 +75,7 @@ double Expression::evalTree(Node *n, vector<double> values) {
 
   } else if (n->isNum()) {
     // Hardcoded constant e.g. 1.4
-    return stod(token);
+    return n->getConstVal();
     
   } else if (n->isBinaryOp()) {
     // Binary Operator on left and right child
@@ -102,6 +102,7 @@ void Expression::printInfixString() {
 
 void Expression::printConstants() {
   for (int i = 0; i < numConsts && i < constVals.size(); i++)  {
+    
     cout << consts[i] << " = " << constVals[i] << endl;    
   }
 }

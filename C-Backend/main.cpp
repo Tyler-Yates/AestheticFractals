@@ -249,6 +249,11 @@ void glutInit() {
   glutMainLoop();
 }
 
+void error_callback(int error, const char* description)
+{
+    fputs(description, stderr);
+}
+
 //****************************************
 int main(int argc, char** argv){
   glutInit(&argc, argv);
@@ -338,8 +343,8 @@ int main(int argc, char** argv){
       glutInit();
     }
   } else {
-    //fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)", "x", "x", "y", "z"));
-    fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
+    fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)", "x", "x", "y", "z"));
+    //fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
     glutInit();
   }
 
@@ -366,3 +371,42 @@ void adjustBounds(AttractorFractal f) {
 
   glMultMatrixf(rot_matrix);
 }
+
+/*
+ TODO: Switch from glut to glfw for hidden window support.
+ http://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project
+int glfwStartup() {
+  // Initialise GLFW
+  if( !glfwInit() )
+    {
+      fprintf( stderr, "Failed to initialize GLFW\n" );
+      return -1;
+    }
+
+  glfwSetErrorCallback(error_callback);
+  glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
+  glfwWindowHint(GLFW_VISIBLE, 0);
+
+  // Open a window and create its OpenGL context
+  GLFWwindow* window = glfwCreateWindow( 1024, 768, "Aesthetic Fractals glfw Test", NULL, NULL );
+  if (!window)
+    {
+      fprintf( stderr, "Failed to open GLFW window\n" );
+      glfwTerminate();
+      return -1;
+    }
+ 
+  // Enable GLEW library for External rendering
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    exit(0);
+  }
+
+  glfwMakeContextCurrent(window);
+  return 1;
+}
+*/

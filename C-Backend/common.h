@@ -12,6 +12,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
+//#include <GLFW/glfw3.h>
 #endif
 
 #pragma hdrstop

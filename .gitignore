@@ -6,4 +6,8 @@ aesthetics
 *.classpath
 *#
 images/
+out/
+.idea/
 *.png
+*.iml
+*.project

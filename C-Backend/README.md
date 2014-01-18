@@ -3,7 +3,7 @@ Genetic Fractals
 
 A research tool studying the generation and evolution of aesthetically-pleasing fractals. It uses crowd-sourced testing along with observational patterns in the mathematical structure of attractor fractals to find optimal constants and equations.
 
-This program is meant to be used in conjunction with Tyler Yates' [Java Evolution GUI](https://bitbucket.org/terminex9/aestheticfractals) (Must request access to view).
+This program is meant to be used in conjunction with Tyler Yates' [Java Evolution GUI](https://github.com/Tyler-Yates/AestheticFractals).
 
 ### Dependencies
 
