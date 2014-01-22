@@ -119,7 +119,7 @@ class ImageGenerator extends Thread
         try
         {
             fractal.generateImage();
-        } catch (IOException | InterruptedException e)
+    } catch (IOException | InterruptedException e)
         {
             e.printStackTrace();
         }
