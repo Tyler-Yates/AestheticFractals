@@ -1,0 +1,5 @@
+Update C-Genetics:
+git subtree pull --prefix=C-Genetics/ cgenetics master
+
+Contribute Changes Upstream:
+git subtree push --prefix=C-Genetics/ cgenetics master
