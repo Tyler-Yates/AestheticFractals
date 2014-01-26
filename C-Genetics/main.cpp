@@ -10,17 +10,20 @@
 
 using namespace std;
 
+// Legacy variables for Mandelbrot Set
 GLfloat minX = -2.2f, maxX = 0.8f, minY = -1.5f, maxY = 1.5; // complex plane boundaries
+const GLfloat radius = 5.0f;
 const int paletteSize = 128;
 GLfloat palette[paletteSize][3];
 
-const GLfloat radius = 5.0f;
-bool fullScreen=false;
-
+// Window Variables
 int windowID;
 int window_width=600, window_height=600;
 float window_aspect = window_width / static_cast<float>(window_height);
 
+bool fullScreen=false;
+
+// GLUT Utility Variables
 float zoom = 1;
 float mouse_x, mouse_y;
 float arcmouse_x, arcmouse_y, arcmouse_z;
@@ -38,6 +41,9 @@ vector<CliffordAttractor> fractals;
 //vector<AttractorFractal> fractals;
 
 //****************************************
+/*
+  Legacy palette generator for Mandelbrot Set
+ */
 GLfloat* calculateColor(GLfloat u, GLfloat v){
   GLfloat re = u;
   GLfloat im = v;
@@ -58,32 +64,32 @@ void adjustBounds(AttractorFractal f);
 
 //****************************************
 void Repaint() {
-  int screen_width = glutGet(GLUT_SCREEN_WIDTH);
-  int screen_height = glutGet(GLUT_SCREEN_HEIGHT);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the screen buffer
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   int size = fractals.size();
   for (int i = 0; i < size; i++) {
     adjustBounds(fractals[i]);
     fractals[i].paint();
   }
-  
+
   glFlush();
   glutSwapBuffers();
 }
 
 //****************************************
-void Reshape(int w, int h){ // function called when window size is changed
-  glViewport (0, 0, (GLsizei)w, (GLsizei)h); // set new dimension of viewable screen
+/*
+  Update viewport in response to change in window size
+ */
+void Reshape(int w, int h){
+  glViewport (0, 0, (GLsizei)w, (GLsizei)h);
   glutPostRedisplay();
 }
 
 void resize() {
-  glutReshapeWindow(window_width,window_height); // sets default window size
+  glutReshapeWindow(window_width,window_height); // Default window size
   GLsizei windowX = (glutGet(GLUT_SCREEN_WIDTH)-window_width)/2;
   GLsizei windowY = (glutGet(GLUT_SCREEN_HEIGHT)-window_height)/2;
-  glutPositionWindow(windowX, windowY); // centers window on the screen
+  glutPositionWindow(windowX, windowY); // Center window
 }
 
 void resize(int w, int h) {
@@ -92,10 +98,13 @@ void resize(int w, int h) {
   ExternalRenderer::setImageWidth(window_width);
   ExternalRenderer::setImageHeight(window_height);
   resize();
-  Reshape(w, h);
+  Reshape(nw, h);
 }
 
 //****************************************
+/*
+  Return a vector from fractal center to world coordinates of mouse
+ */
 Vec3f arcSnap(float x, float y) {
   x = (2.0*x / window_width) - 1;
   y = (2.0*y / window_height) - 1;
@@ -137,7 +146,7 @@ void MouseMotion(int x, int y) {
   y = window_height - y;
 
   if (left_mouse_button) {
-    // Rotation
+    // Arc-ball rotational movement
     Vec3f arc_coords = arcSnap(x, y);
     float fx = arc_coords[0];
     float fy = arc_coords[1];
@@ -163,6 +172,7 @@ void MouseMotion(int x, int y) {
     glGetFloatv(GL_MODELVIEW_MATRIX, rot_matrix);
 
     arcmouse_x = fx, arcmouse_y = fy, arcmouse_z = fz;
+
   } else if (right_mouse_button && y && mouse_y) {
     // Zoom: Multiplies current zoom by ratio between initial and current y
     float smy = mouse_y+window_height;
@@ -185,12 +195,12 @@ void MouseMotion(int x, int y) {
 
 void Keyboard(unsigned char key, int x, int y){
   switch(key){
-  case 32: // Spacebar
+  case 32:  // (Spacebar) Mutate fractal
     fractals[0].mutateConstants();
     zoom = 1;
     glutPostRedisplay();
     break;
-  case 'F':
+  case 'F':  // Toggle fullscreen
   case 'f':
     if(fullScreen){
       resize();
@@ -202,10 +212,10 @@ void Keyboard(unsigned char key, int x, int y){
     }
     glutPostRedisplay();
     break;
-  case 's':
+  case 's':  // Save to test.png
     ExternalRenderer::outputToImage("test");
     break;
-  case 27 : // escape key - close the program
+  case 27 : // (ESC) close the program
     glutDestroyWindow(windowID);
     exit(0);
     break;
@@ -236,7 +246,7 @@ void createPalette(){
   }
 }
 
-void glutInit() {
+void renderInGlut() {
   glutFullScreen();
   fullScreen=true;
 
@@ -251,8 +261,9 @@ void glutInit() {
 
 void error_callback(int error, const char* description)
 {
-    fputs(description, stderr);
+  fputs(description, stderr);
 }
+
 
 //****************************************
 int main(int argc, char** argv){
@@ -289,68 +300,79 @@ int main(int argc, char** argv){
   ExternalRenderer::setImageHeight(window_height);
 
   if (argc >= 3) {
-    if (strcmp(argv[1],"-save") == 0) {
+    bool savingImage = (strcmp(argv[1],"-save") == 0);
+    int startIndex = (savingImage ? 2 : 1);
+    GLuint renderbuffer;
+    char* imgName;
+
+    if (savingImage) {
+      /*
+        User wants to save the fractal image.
+        ./aesthetics -save [ -p PRECISION_POINTS ] [ -s WIDTH HEIGHT ] IMG_NAME
+        EXPR_X EXPR_Y EXPR_Z EXPR_R EXPR_G EXPR_B
+      */
+
+      // Create new offscreen renderbuffer
       glutHideWindow();
       ExternalRenderer::switchToExternalTarget();
-      GLuint renderbuffer;
       ExternalRenderer::getNewRenderBuffer(&renderbuffer);
       glutHideWindow();
+    }
 
-      for (int i = 2; i <= argc - 7; i+=7) {
-        if (strcmp(argv[i],"-p") == 0) {
-          setPrecisionPoints(stoi(argv[++i]));
-          i++;
-        }
+    // Iterate over all fractal definitions provided by user
+    for (int i = startIndex; i <= argc - 6; i+=6) {
 
-        if (strcmp(argv[i],"-s") == 0) {
-          int width = stoi(argv[++i]);
-          int height = stoi(argv[++i]);
-          resize(width, height);
-          i++;
-        }
+      // Set number of points to calculate (default 1,000,000)
+      if (strcmp(argv[i],"-p") == 0) {
+        setPrecisionPoints(stoi(argv[++i]));
+        ++i;
+      }
 
-        // Calculate points and draw
-        CliffordAttractor ca(argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5], argv[i+6]);
-        fractals.push_back(ca);
+      // Resize window
+      if (strcmp(argv[i],"-s") == 0) {
+        int width = stoi(argv[++i]);
+        int height = stoi(argv[++i]);
+        resize(width, height);
+        ++i;
+      }
 
+      if (savingImage) {
+        imgName = argv[i++];
+      }
+
+      // Calculate points
+      CliffordAttractor ca(argv[i], argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5]);
+      fractals.push_back(ca);
+
+      if (savingImage) {
         Repaint();
         glutHideWindow();
 
-        // save Image
-        ExternalRenderer::outputToImage(argv[i]);
-        ca.saveToFile(argv[i]);
+        // Save Image
+        ExternalRenderer::outputToImage(imgName);
+        ca.saveToFile(imgName);
         fractals.clear();
+      } else {
+        renderInGlut();
       }
+    }
 
+    if (savingImage)
       ExternalRenderer::deleteRenderBuffer(&renderbuffer);
 
-    } else {
-      for (int i = 1; i <= argc - 6; i+=6) {
-        if (strcmp(argv[i],"-p") == 0) {
-          setPrecisionPoints(stoi(argv[++i]));
-          i++;
-        }
-        if (strcmp(argv[i],"-s") == 0) {
-          int width = stoi(argv[++i]);
-          int height = stoi(argv[++i]);
-          resize(width, height);
-          i++;
-        }
-
-        CliffordAttractor ca(argv[i], argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5]);
-        fractals.push_back(ca);
-      }
-      glutInit();
-    }
   } else {
+    // No fractal definitions provided; draw an example fractal.
     fractals.push_back(CliffordAttractor("sin(-1.4 * y) + cos(-1.4 * x)", "sin(1.6 * x) + 0.7 * cos(1.6 * y)", "x", "x", "y", "z"));
     //fractals.push_back(CliffordAttractor("sin( a * y ) + c * cos(a * x)", "sin(b * x) + d * cos(b * y)"));
-    glutInit();
+    renderInGlut();
   }
 
   return 0;
 }
 
+/*
+  Adjust the camera to fit Fractal f.
+ */
 void adjustBounds(AttractorFractal f) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -373,15 +395,15 @@ void adjustBounds(AttractorFractal f) {
 }
 
 /*
- TODO: Switch from glut to glfw for hidden window support.
- http://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project
-int glfwStartup() {
+  TODO: Use glfw instead of glut if detected, for hidden window support.
+  http://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project
+  int glfwStartup() {
   // Initialise GLFW
   if( !glfwInit() )
-    {
-      fprintf( stderr, "Failed to initialize GLFW\n" );
-      return -1;
-    }
+  {
+  fprintf( stderr, "Failed to initialize GLFW\n" );
+  return -1;
+  }
 
   glfwSetErrorCallback(error_callback);
   glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
@@ -393,20 +415,20 @@ int glfwStartup() {
   // Open a window and create its OpenGL context
   GLFWwindow* window = glfwCreateWindow( 1024, 768, "Aesthetic Fractals glfw Test", NULL, NULL );
   if (!window)
-    {
-      fprintf( stderr, "Failed to open GLFW window\n" );
-      glfwTerminate();
-      return -1;
-    }
- 
+  {
+  fprintf( stderr, "Failed to open GLFW window\n" );
+  glfwTerminate();
+  return -1;
+  }
+
   // Enable GLEW library for External rendering
   GLenum err = glewInit();
   if (GLEW_OK != err) {
-    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-    exit(0);
+  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+  exit(0);
   }
 
   glfwMakeContextCurrent(window);
   return 1;
-}
+  }
 */

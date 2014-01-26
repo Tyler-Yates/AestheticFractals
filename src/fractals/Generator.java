@@ -18,10 +18,10 @@ public class Generator
     static Stack<ArrayList<Fractal> > next = new Stack<ArrayList<Fractal> >();
 
     public static void renderFractalInGL(int i) throws IOException {
-    	if (fractals == null || i >= fractals.size()) return;
-    	fractals.get(i).renderInGL();
+        if (fractals == null || i >= fractals.size()) return;
+        fractals.get(i).renderInGL();
     }
-    
+
     public static void generateNewGeneration()
     {
         if (fractals != null)
@@ -29,44 +29,31 @@ public class Generator
 
         generation++;
 
-        for (int i = 0; i < GraphicalInterface.selectedFractals.length; i++)
-        {
+        for (int i = 0; i < GraphicalInterface.selectedFractals.length; i++) {
             if (GraphicalInterface.selectedFractals[i])
                 selectedFractals.add(fractals.get(i));
         }
-        
+
         fractals = new ArrayList<Fractal>(9);
 
         Fractal newFractal;
         for (int i = 0; i < 9; i++)
-        {
-            if (selectedFractals.isEmpty())
             {
-            	if (i == 0) {
-            		newFractal = new Fractal(new Equation("sin(-1.4 * y) + cos(-1.4 * x)"), new Equation("sin(1.6 * x) + 0.7 * cos(1.6 * y)"));
-            	}
-            	else {
-            		newFractal = new Fractal();
-            	}
-            } else
-            {
-                Fractal Parent1 = selectedFractals
-                        .get((int) (Math.random() * selectedFractals.size()));
-                if (i < 3)
-                {
-                    Fractal Parent2 = selectedFractals
-                            .get((int) (Math.random() * selectedFractals.size()));
-                    newFractal = Parent1.cross(Parent2);
-                } else if (i < 6)
-                {
-                    newFractal = Parent1.mutate();
-                } else
-                {
-                    newFractal = Parent1.clone();
+                if (selectedFractals.isEmpty()) {
+                    newFractal = new Fractal();
+                } else {
+                    Fractal Parent1 = selectedFractals.get((int) (Math.random() * selectedFractals.size()));
+                    if (i < 3) {
+                        Fractal Parent2 = selectedFractals.get((int) (Math.random() * selectedFractals.size()));
+                        newFractal = Parent1.cross(Parent2);
+                    } else if (i < 6) {
+                        newFractal = Parent1.mutate();
+                    } else {
+                        newFractal = Parent1.clone();
+                    }
                 }
+                fractals.add(newFractal);
             }
-            fractals.add(newFractal);
-        }
 
         ImageManager.generateNewImages(fractals);
 
@@ -82,10 +69,10 @@ public class Generator
     {
         if (previous.isEmpty()) return;
         generation--;
-        
+
         if (fractals != null)
             next.push(fractals);
-        
+
         fractals = previous.pop();
         GraphicalInterface.frame.getContentPane().repaint();
     }
@@ -94,14 +81,14 @@ public class Generator
     {
         if (next.isEmpty()) return;
         generation++;
-        
+
         if (fractals != null)
             previous.push(fractals);
-        
+
         fractals = next.pop();
         GraphicalInterface.frame.getContentPane().repaint();
     }
-    
+
 }
 
 class ImageGenerator extends Thread
@@ -117,11 +104,11 @@ class ImageGenerator extends Thread
     public void run()
     {
         try
-        {
-            fractal.generateImage();
-    } catch (IOException | InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+            {
+                fractal.generateImage();
+            } catch (IOException | InterruptedException e)
+            {
+                e.printStackTrace();
+            }
     }
 }

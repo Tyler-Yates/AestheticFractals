@@ -18,16 +18,19 @@ Expression::Expression(string infixExpression, vector<string> consts, vector<str
   root = NULL;
   vector<string> rpnTokens;
 
+  // Variables that will be defined iteratively e.g. x, y, z
   this->vars = vars;
   this->numVars = vars.size();
   for (string s: vars)
     addVar(s);
 
+  // Ambiguous constants that will be calculated before evaluation e.g. a, b, c
   this->consts = consts;
   this->numConsts = consts.size();
   for (string s: consts)
     addVar(s);
 
+  // Represent expression with a parse tree
   infixStringToRPN(infixExpression, &rpnTokens);
   createTree(rpnTokens);
 }
