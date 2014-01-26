@@ -98,7 +98,7 @@ void resize(int w, int h) {
   ExternalRenderer::setImageWidth(window_width);
   ExternalRenderer::setImageHeight(window_height);
   resize();
-  Reshape(nw, h);
+  Reshape(w, h);
 }
 
 //****************************************
