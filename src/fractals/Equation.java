@@ -1,5 +1,6 @@
 package fractals;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,7 +20,7 @@ import de.congrace.exp4j.ExpressionBuilder;
  *
  * This postfix expression is easy to convert to a binary expression tree.
  */
-public class Equation {
+public class Equation  implements Serializable{
     //Determines the chance of mutating each constant for a call to mutate()
     //0 = no chance to mutate
     //1 = every constant is mutated
@@ -390,7 +391,7 @@ public class Equation {
 	}
 }
 
-class Node {
+class Node implements Serializable {
 	private String value;
 	private Node left, right, parent;
 

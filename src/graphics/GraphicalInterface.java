@@ -10,7 +10,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.IOException;
+import java.io.*;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -34,6 +35,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     //The window
 	public static JFrame frame;
 	public static JLayeredPane selector;
+    public static Generator generator;
 
     /*
     Represents the fractals that have been selected as parents for the next generation.
@@ -83,7 +85,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	public static void main(String args[]) throws IOException,
 			InterruptedException {
         //Generate the first generation
-		Generator.generateNewGeneration();
+        generator = new Generator();
+        generator.generateNewGeneration();
         //Initialize the JFrame window
 		new GraphicalInterface();
 	}
@@ -95,9 +98,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 		if (fullScreen) {
 			frame.setExtendedState(Frame.NORMAL);
 		} else {
-			frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);  
+			frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
 		}
-		
+
 		fullScreen = !fullScreen;
 	}
 
@@ -119,12 +122,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 			int y = i / 3 * boxHeight;
 
 			g.setColor(fgColor);
-            //Only draw the fractal when the image is completely finished
-			if (ImageManager.indexIsReady(i))
-				drawImage(g, i, x, y);
-            //Otherwise just draw text
-			else
-				g.drawString("Loading...", x + 20, y + 20);
+            //Draw the fractal
+			drawImage(g, i, x, y);
 			drawBox(g, x, y, boxWidth, boxHeight);
 		}
 
@@ -188,7 +187,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
      * @param y
      */
 	public void drawImage(Graphics g, int index, int x, int y) {
-		Generator.drawImage(index, g, x, y);
+		generator.drawImage(index, g, x, y);
 	}
 
     /**
@@ -310,27 +309,65 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	public void keyReleased(KeyEvent e) {
         //Space bar generates a new generation
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			Generator.generateNewGeneration();
+			generator.generateNewGeneration();
             //Clear the selected fractals
 			selectedFractals = new boolean[9];
 			repaint();
 		}
         //Left goes back one generation
         else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
-		    Generator.decrementGeneration();
+		    generator.decrementGeneration();
 		}
         //Right goes forward a generation
         else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
-		    Generator.incrementGeneration();
+		    generator.incrementGeneration();
 		}
         //F toggles full-screen mode
         else if(e.getKeyCode()==KeyEvent.VK_F) {
 			toggleFullScreen();
 		}
-
+        else if(e.getKeyChar()=='s') {
+            save();
+        }
+        else if(e.getKeyChar()=='l') {
+            load();
+        }
 	}
 
-	@Override
+    private void save() {
+        System.out.print("Saving...");
+        try (
+                OutputStream file = new FileOutputStream("generation.ser");
+                OutputStream buffer = new BufferedOutputStream(file);
+                ObjectOutput output = new ObjectOutputStream(buffer);
+        ){
+            output.writeObject(generator);
+            System.out.println("Done!");
+        }
+        catch(IOException ex){
+            System.err.println("Error saving the generation");
+            ex.printStackTrace();
+        }
+    }
+
+    private void load() {
+        System.out.print("Loading...");
+        try(
+                InputStream file = new FileInputStream("generation.ser");
+                InputStream buffer = new BufferedInputStream(file);
+                ObjectInput input = new ObjectInputStream (buffer);
+        ){
+            generator = (Generator) input.readObject();
+            System.out.println("Done!");
+            repaint();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
@@ -343,10 +380,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Add menu option to save png and info file with specified filename
-		
+
 		if (e.getActionCommand().equals("Render fractal")) {
 			try {
-				Generator.renderFractalInGL(menuOpenForFractalNum);
+				generator.renderFractalInGL(menuOpenForFractalNum);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

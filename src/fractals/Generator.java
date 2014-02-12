@@ -4,25 +4,26 @@ import graphics.GraphicalInterface;
 
 import java.awt.Graphics;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class Generator
+public class Generator implements Serializable
 {
-    static int generation = 0; // The current generation's number
+    int generation = 0; // The current generation's number
 
-    static ArrayList<Fractal> fractals;  // Current Fractals
-    static ArrayList<Fractal> selectedFractals = new ArrayList<Fractal>(9);
+    ArrayList<Fractal> fractals;  // Current Fractals
+    ArrayList<Fractal> selectedFractals = new ArrayList<Fractal>(9);
 
-    static Stack<ArrayList<Fractal> > previous = new Stack<ArrayList<Fractal> >();
-    static Stack<ArrayList<Fractal> > next = new Stack<ArrayList<Fractal> >();
+    Stack<ArrayList<Fractal> > previous = new Stack<ArrayList<Fractal> >();
+    Stack<ArrayList<Fractal> > next = new Stack<ArrayList<Fractal> >();
 
-    public static void renderFractalInGL(int i) throws IOException {
+    public void renderFractalInGL(int i) throws IOException {
         if (fractals == null || i >= fractals.size()) return;
         fractals.get(i).renderInGL();
     }
 
-    public static void generateNewGeneration()
+    public void generateNewGeneration()
     {
         if (fractals != null)
             previous.push(fractals);
@@ -55,17 +56,15 @@ public class Generator
                 fractals.add(newFractal);
             }
 
-        ImageManager.generateNewImages(fractals);
-
         selectedFractals.clear();
     }
 
-    public static void drawImage(int index, Graphics g, int x, int y)
+    public void drawImage(int index, Graphics g, int x, int y)
     {
         fractals.get(index).drawImage(g, x, y);
     }
 
-    public static void decrementGeneration()
+    public void decrementGeneration()
     {
         if (previous.isEmpty()) return;
         generation--;
@@ -77,7 +76,7 @@ public class Generator
         GraphicalInterface.frame.getContentPane().repaint();
     }
 
-    public static void incrementGeneration()
+    public void incrementGeneration()
     {
         if (next.isEmpty()) return;
         generation++;
@@ -89,26 +88,4 @@ public class Generator
         GraphicalInterface.frame.getContentPane().repaint();
     }
 
-}
-
-class ImageGenerator extends Thread
-{
-    Fractal fractal;
-
-    public ImageGenerator(Fractal f)
-    {
-        fractal = f;
-    }
-
-    @Override
-    public void run()
-    {
-        try
-            {
-                fractal.generateImage();
-            } catch (IOException | InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-    }
 }

@@ -8,14 +8,16 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
-public class Fractal {
-	Equation x, y;
-	BufferedImage img;
+public class Fractal implements Serializable {
+	private Equation x, y;
+	private transient BufferedImage img;
+    private boolean isGenerating;
 
 	static {
 		try {
@@ -89,8 +91,20 @@ public class Fractal {
 	}
 	
 	public void drawImage(Graphics g, int x, int y) {
-		g.drawImage(img, x, y, GraphicalInterface.frame.getWidth() / 3,
-				GraphicalInterface.frame.getHeight() / 3,
-				GraphicalInterface.frame);
+        if(img==null && !isGenerating) {
+            isGenerating=true;
+            ImageManager.renderImage(this);
+            System.out.println("Rendering...");
+        }
+
+        if(img==null) {
+            g.drawString("Loading...", x + 20, y + 20);
+        }
+        else {
+            isGenerating=false;
+            g.drawImage(img, x, y, GraphicalInterface.frame.getWidth() / 3,
+            GraphicalInterface.frame.getHeight() / 3,
+            GraphicalInterface.frame);
+        }
 	}
 }
