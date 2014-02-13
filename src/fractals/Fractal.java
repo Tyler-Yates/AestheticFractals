@@ -2,18 +2,14 @@ package fractals;
 
 import graphics.GraphicalInterface;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Toolkit;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-
-import javax.imageio.ImageIO;
 
 /**
  * Represents a single fractal
@@ -40,6 +36,7 @@ public class Fractal implements Serializable {
     static final String IMAGE_PATH = "images" + File.separator;
 
     //Define the ID for the Fractal. This ID is randomly generated
+    //TODO Implement a method where Fractals cannot get the same ID in the same generation
     String id = "Fractal_" + ((int) (Math.random() * Integer.MAX_VALUE));
 
     /**
@@ -196,7 +193,7 @@ public class Fractal implements Serializable {
                 //If we successfully read in the image, we are done with the method
                 return;
             } catch (IOException e) {
-                System.err.println("File name: " +fileName);
+                System.err.println("File name: " + fileName);
                 e.printStackTrace();
             }
         }
