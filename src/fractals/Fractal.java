@@ -210,7 +210,6 @@ public class Fractal implements Serializable {
             isGenerating = true;
             //Call the ImageManager method to render this image in a Thread
             ImageManager.renderImage(this);
-            System.out.println("Rendering...");
         }
 
         //If no image has been rendered, just draw loading text to the window
