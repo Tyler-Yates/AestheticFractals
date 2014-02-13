@@ -148,7 +148,7 @@ public class Fractal implements Serializable {
      * @throws IOException
      * @throws InterruptedException
      */
-    public void generateImage() throws IOException, InterruptedException {
+    public void generateImage() {
         //Get the dimensions of the screen in order to determine how large to render the image
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -173,15 +173,31 @@ public class Fractal implements Serializable {
                 IMAGE_PATH + id,
                 x.toString(), y.toString(), "0",
                 "1", "1", "1"});
-        Process p = processBuilder.start();
-        p.waitFor();
-        p.destroy();
+        try {
+            Process p = processBuilder.start();
+            p.waitFor();
+            p.destroy();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        //Load the image file
-        File f = new File(IMAGE_PATH + id + ".png");
-        img = ImageIO.read(f);
-        //Delete the image file on disk to prevent the image folder from filling up the disk
-        f.delete();
+        //Load the image file. If it fails, retry a few times.
+        int tries = 3;
+        while (tries-- > 0) {
+            try {
+                File f = new File(IMAGE_PATH + id + ".png");
+                img = ImageIO.read(f);
+                //Delete the image file on disk to prevent the image folder from filling up the disk
+                f.delete();
+                
+                //If we successfully read in the image, we are done with the method
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

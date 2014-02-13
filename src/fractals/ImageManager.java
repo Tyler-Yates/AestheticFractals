@@ -19,14 +19,10 @@ public class ImageManager {
         }
 
         public void run() {
-            try {
-                f.generateImage();
+            f.generateImage();
 
-                //Force a repaint of the window to draw the newly rendered Fractal
-                GraphicalInterface.frame.getContentPane().repaint();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            //Force a repaint of the window to draw the newly rendered Fractal
+            GraphicalInterface.frame.getContentPane().repaint();
         }
     }
 
