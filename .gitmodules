@@ -1,0 +1,3 @@
+[submodule "C-Genetics"]
+	path = C-Genetics
+	url = git://github.com/kyeah/Genetic-Fractals.git
