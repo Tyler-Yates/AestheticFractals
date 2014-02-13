@@ -35,6 +35,11 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     //The window
 	public static JFrame frame;
 	public static JLayeredPane selector;
+
+    /*
+    Generator controls the generation of new Fractals. It is an instantiation because we need to save
+    this Object to a file through Serialization in order to save the state of the program.
+     */
     public static Generator generator;
 
     /*
@@ -201,7 +206,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
 		g.setColor(hoverColor);
 		g.fillRect(l + 1, t + 1, frame.getWidth() / 3 - 2,
-				frame.getHeight() / 3 - 2);
+                frame.getHeight() / 3 - 2);
 	}
 
     /**
@@ -297,7 +302,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -326,14 +330,19 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         else if(e.getKeyCode()==KeyEvent.VK_F) {
 			toggleFullScreen();
 		}
+        //S saves the state of the program
         else if(e.getKeyChar()=='s') {
             save();
         }
+        //L loads a previously saved state
         else if(e.getKeyChar()=='l') {
             load();
         }
 	}
 
+    /**
+     * Saves the state of the program to a file.
+     */
     private void save() {
         System.out.print("Saving...");
         try (
@@ -350,6 +359,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         }
     }
 
+    /**
+     * Loads a previously saved state of the program.
+     */
     private void load() {
         System.out.print("Loading...");
         try(
@@ -369,7 +381,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
     @Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 

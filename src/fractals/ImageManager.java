@@ -2,6 +2,11 @@ package fractals;
 
 import java.io.IOException;
 
+/**
+ * ImageManager controls the generation of Fractal images.
+ * This class uses Threads to ensure that images are rendered as fast
+ * as possible.
+ */
 public class ImageManager {
 	// Threaded generator for creating the image
 	static class ImageGeneratorThread extends Thread {
@@ -20,6 +25,11 @@ public class ImageManager {
 		}
 	}
 
+    /**
+     * Renders the image of the Fractal f. This method calls f's own generateImage() method
+     * but in a threaded fashion.
+     * @param f
+     */
     public static void renderImage(Fractal f) {
         new ImageGeneratorThread(f).start();
     }
