@@ -185,16 +185,18 @@ public class Fractal implements Serializable {
 
         //Load the image file. If it fails, retry a few times.
         int tries = 3;
+        String fileName = IMAGE_PATH + id + ".png";
         while (tries-- > 0) {
             try {
-                File f = new File(IMAGE_PATH + id + ".png");
+                File f = new File(fileName);
                 img = ImageIO.read(f);
                 //Delete the image file on disk to prevent the image folder from filling up the disk
                 f.delete();
-                
+
                 //If we successfully read in the image, we are done with the method
                 return;
             } catch (IOException e) {
+                System.err.println("File name: " +fileName);
                 e.printStackTrace();
             }
         }
