@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -151,10 +152,24 @@ public class Fractal implements Serializable {
         //Get the dimensions of the screen in order to determine how large to render the image
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
+        //Define the width and height of the image
+        int image_width = (int) (screenSize.getWidth() / 3);
+        int image_height = (int) (screenSize.getHeight() / 3);
+
+        /*
+        For reasons as yet unknown, the Java PNG reader freaks out when it tries to read PNG files whose dimensions
+        are not divisible by 4. Thus, add a few pixels to the width and height if necessary to enforce divisibility
+        by 4.
+         */
+        if (image_width % 4 != 0)
+            image_width += 4 - image_width % 4;
+        if (image_height % 4 != 0)
+            image_height += 4 - image_height;
+
         //Call the C-Backend to render the image and save it to a file
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{
                 "C-Genetics/aesthetics", "-save", "-p", "100000",
-                "-s", "" + screenSize.getWidth() / 3, "" + screenSize.getHeight() / 3,
+                "-s", "" + image_width, "" + image_height,
                 IMAGE_PATH + id,
                 x.toString(), y.toString(), "0",
                 "1", "1", "1"});
