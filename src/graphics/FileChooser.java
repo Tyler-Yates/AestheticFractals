@@ -21,8 +21,11 @@ public class FileChooser {
         JFileChooser fileChooser = new JFileChooser();
 
         //Limit the files shown to only those of the given extension
-        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("custom", extension);
+        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter(extension+" files", extension);
         fileChooser.setFileFilter(fileNameExtensionFilter);
+
+        //Set the default directory for the FileChooser to the AestheticFractals directory
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
         //Determine if the user pressed the 'Save' or 'Cancel' button
         int status = fileChooser.showSaveDialog(GraphicalInterface.frame);
@@ -52,8 +55,11 @@ public class FileChooser {
         JFileChooser fileChooser = new JFileChooser();
 
         //Limit the files shown to only those of the given extension
-        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("custom", extension);
+        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter(extension+" files", extension);
         fileChooser.setFileFilter(fileNameExtensionFilter);
+
+        //Set the default directory for the FileChooser to the AestheticFractals directory
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
         //Determine if the user pressed the 'Save' or 'Cancel' button
         int status = fileChooser.showOpenDialog(GraphicalInterface.frame);
