@@ -35,9 +35,8 @@ public class Fractal implements Serializable {
     //Defines the path to the image folder
     static final String IMAGE_PATH = "images" + File.separator;
 
-    //Define the ID for the Fractal. This ID is randomly generated
-    //TODO Implement a method where Fractals cannot get the same ID in the same generation
-    String id = "Fractal_" + ((int) (Math.random() * Integer.MAX_VALUE));
+    //Define the ID for the Fractal
+    private String id;
 
     /**
      * Constructs a new Fractal with randomly generated X and Y Equations
@@ -45,6 +44,9 @@ public class Fractal implements Serializable {
     public Fractal() {
         x = Equation.generateRandomXEquation();
         y = Equation.generateRandomYEquation();
+
+        //The ID for the fractal is the hash code of the Equations
+        id = ""+x.hashCode()+y.hashCode();
     }
 
     /**
@@ -56,6 +58,9 @@ public class Fractal implements Serializable {
     public Fractal(Equation x, Equation y) {
         this.x = x;
         this.y = y;
+
+        //The ID for the fractal is the hash code of the Equations
+        id = ""+x.hashCode()+y.hashCode();
     }
 
     /**
