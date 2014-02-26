@@ -46,9 +46,8 @@ public class Fractal implements Serializable {
         y = Equation.generateRandomYEquation();
 
         //The ID for the fractal is the hash code of the Equations
-        id = ""+x.hashCode()+y.hashCode();
+        id = "f_"+x.hashCode()+y.hashCode();
     }
-
     /**
      * Constructs a new Fractal with the given X and Y equations
      *
@@ -60,7 +59,7 @@ public class Fractal implements Serializable {
         this.y = y;
 
         //The ID for the fractal is the hash code of the Equations
-        id = ""+x.hashCode()+y.hashCode();
+        id = "f_"+x.hashCode()+y.hashCode();
     }
 
     /**
