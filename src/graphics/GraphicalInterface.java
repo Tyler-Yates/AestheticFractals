@@ -16,7 +16,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
     //The window
     public static JFrame frame;
-    public static JLayeredPane selector;
 
     /*
     Generator controls the generation of new Fractals. It is an instantiation because we need to save
@@ -60,6 +59,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
     //Defines the height of the evolution selector at the bottom of the screen
     private static final int SELECTOR_HEIGHT = 100;
+    private static EvolutionSelector selector;
 
     /**
      * Initializes the JFrame
@@ -82,6 +82,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         generator.generateNewGeneration();
         //Initialize the JFrame window
         new GraphicalInterface();
+
+        //Initialize the Evolution Selector to the immediate right of the JFrame window
+        selector = new EvolutionSelector(frame.getWidth(), 0);
     }
 
     /**
@@ -107,8 +110,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         fullScreen = !fullScreen;
     }
 
-    /*
-    Draws the 9 boxes on the window
+    /**
+     * Draw the 9 fractal boxes on the window
+     *
+     * @param g
      */
     public void drawInterface(Graphics g) {
         //Fill the window with the background color
@@ -135,10 +140,20 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
         //Highlight the box that the mouse is hovering over
         drawSelectedBox(g);
+
+        //Draw the evolution selector bar
+        drawSelectorBar(g);
     }
 
-    /*
-    Highlight the boxes the user has selected
+    private void drawSelectorBar(Graphics g) {
+        g.setColor(Color.lightGray);
+        g.fillRect(0, getFractalWindowHeight(), frame.getWidth(), SELECTOR_HEIGHT);
+    }
+
+    /**
+     * Highlight the boxes the user has selected
+     *
+     * @param g
      */
     private void drawSelectedBoxes(Graphics g) {
         g.setColor(selectedColor);
