@@ -35,7 +35,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     public static boolean selectedFractals[] = new boolean[9];
 
     //Represents the size of the window in pixels
-    static int windowWidth = 1024, windowHeight = 768;
+    static int windowWidth = 1024, windowHeight = 868;
     static int mouseX, mouseY; // Mouse location on the screen
 
     //Program version
@@ -48,15 +48,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     private static Color fgColor = Color.white;
 
     //Color of the selected fractals
-    private static Color selectedColor = new Color(0, 255, 0, 15);
+    private static Color selectedColor = new Color(255, 255, 255, 35);
     //Color of the boxes where the mouse is hovering over
-    private static Color hoverColor = new Color(255, 255, 255, 15);
+    private static Color hoverColor = new Color(255, 255, 255, 35);
 
     //True if the user is in full-screen mode. This is toggled using the 'f' key
     private static boolean fullScreen = false;
 
     //The file extensions for save states
     private static final String EXTENSION = "ser";
+
+    //Defines the height of the evolution selector at the bottom of the screen
+    private static final int SELECTOR_HEIGHT = 100;
 
     /**
      * Initializes the JFrame
@@ -79,6 +82,15 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         generator.generateNewGeneration();
         //Initialize the JFrame window
         new GraphicalInterface();
+    }
+
+    /**
+     * Returns the total height of the area where the 3x3 grid of fractals are drawn.
+     *
+     * @return
+     */
+    public static int getFractalWindowHeight() {
+        return frame.getHeight() - SELECTOR_HEIGHT;
     }
 
     /**
@@ -105,7 +117,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
         //Define how big each box is by looking at the current window size
         int boxWidth = frame.getWidth() / 3;
-        int boxHeight = frame.getHeight() / 3;
+        int boxHeight = getFractalWindowHeight() / 3;
 
         //Draw each of the 9 boxes
         for (int i = 0; i < 9; i++) {
@@ -133,11 +145,11 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         //Loop through all 9 boxes
         for (int i = 0; i < selectedFractals.length; i++) {
             int x = i % 3 * frame.getWidth() / 3;
-            int y = i / 3 * frame.getHeight() / 3;
+            int y = i / 3 * getFractalWindowHeight() / 3;
 
             //Only highlight the boxes that have been selected
             if (selectedFractals[i]) {
-                g.fillRect(x, y, frame.getWidth() / 3, frame.getHeight() / 3);
+                g.fillRect(x, y, frame.getWidth() / 3, getFractalWindowHeight() / 3);
             }
         }
     }
@@ -192,11 +204,11 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     public void drawSelectedBox(Graphics g) {
         //Use the mouse to determine which box is highlighted
         int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
-        int t = mouseY / (frame.getHeight() / 3) * (frame.getHeight() / 3);
+        int t = mouseY / (getFractalWindowHeight() / 3) * (getFractalWindowHeight() / 3);
 
         g.setColor(hoverColor);
         g.fillRect(l + 1, t + 1, frame.getWidth() / 3 - 2,
-                frame.getHeight() / 3 - 2);
+                getFractalWindowHeight() / 3 - 2);
     }
 
     /**
@@ -229,7 +241,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         mouseY = y - frame.getInsets().top;
 
         int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
-        int t = mouseY / (frame.getHeight() / 3) * (frame.getHeight() / 3);
+        int t = mouseY / (getFractalWindowHeight() / 3) * (getFractalWindowHeight() / 3);
 
         //Repaint the screen if the hover box changes
         if (l != selectedBoxX | t != selectedBoxY) {
@@ -255,7 +267,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         mouseY = y - frame.getInsets().top;
 
         int boxCol = mouseX / (frame.getWidth() / 3);
-        int boxRow = mouseY / (frame.getHeight() / 3);
+        int boxRow = mouseY / (getFractalWindowHeight() / 3);
 
         //Calculate the index of the box
         int boxIndex = (boxRow * 3) + boxCol;
