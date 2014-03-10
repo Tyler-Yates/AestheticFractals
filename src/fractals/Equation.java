@@ -106,9 +106,11 @@ public class Equation implements Serializable {
             //The root of the expression tree is the last Node on the stack after all components have been examined
             root = stack.pop();
 
+            /*
             System.out.print("Creating new equation: ");
             printTree(root);
             System.out.println();
+            */
 
             //Create a list of all Nodes in the expression tree
             trace();

@@ -46,8 +46,9 @@ public class Fractal implements Serializable {
         y = Equation.generateRandomYEquation();
 
         //The ID for the fractal is the hash code of the Equations
-        id = "f_"+x.hashCode()+y.hashCode();
+        id = "f_" + x.hashCode() + y.hashCode();
     }
+
     /**
      * Constructs a new Fractal with the given X and Y equations
      *
@@ -59,7 +60,7 @@ public class Fractal implements Serializable {
         this.y = y;
 
         //The ID for the fractal is the hash code of the Equations
-        id = "f_"+x.hashCode()+y.hashCode();
+        id = "f_" + x.hashCode() + y.hashCode();
     }
 
     /**
@@ -103,8 +104,12 @@ public class Fractal implements Serializable {
         Equation otherCloneY = f.y.clone();
 
         //Cross the cloned X and Y Equations
-        cloneX.cross(otherCloneX);
-        cloneY.cross(otherCloneY);
+        if (GraphicalInterface.selector.xEquation.isSelected()) {
+            cloneX.cross(otherCloneX);
+        }
+        if (GraphicalInterface.selector.yEquation.isSelected()) {
+            cloneY.cross(otherCloneY);
+        }
 
         //Return a new Fractal defined by the new crossed Equations
         return new Fractal(cloneX, cloneY);
@@ -126,8 +131,12 @@ public class Fractal implements Serializable {
         Equation cloneY = y.clone();
 
         //Mutate each of the Equations
-        cloneX.mutate();
-        cloneY.mutate();
+        if (GraphicalInterface.selector.xEquation.isSelected()) {
+            cloneX.mutate();
+        }
+        if (GraphicalInterface.selector.yEquation.isSelected()) {
+            cloneY.mutate();
+        }
 
         //Return a new Fractal defined by the mutated Equations
         return new Fractal(cloneX, cloneY);
