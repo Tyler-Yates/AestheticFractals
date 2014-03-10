@@ -70,6 +70,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(windowWidth, windowHeight);
         frame.addMouseMotionListener(this);
+        frame.addWindowFocusListener(new FocusListener());
         frame.addMouseListener(this);
         frame.addKeyListener(this);
         frame.add(this);
@@ -80,11 +81,12 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         //Generate the first generation
         generator = new Generator();
         generator.generateNewGeneration();
-        //Initialize the JFrame window
-        new GraphicalInterface();
 
         //Initialize the Evolution Selector to the immediate right of the JFrame window
-        selector = new EvolutionSelector(frame.getWidth(), 0);
+        selector = new EvolutionSelector(windowWidth, 0);
+
+        //Initialize the JFrame window
+        new GraphicalInterface();
     }
 
     /**
@@ -145,9 +147,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         drawSelectorBar(g);
     }
 
+    /**
+     * Draw the selector bar at the bottom of the window
+     *
+     * @param g
+     */
     private void drawSelectorBar(Graphics g) {
-        g.setColor(Color.lightGray);
-        g.fillRect(0, getFractalWindowHeight(), frame.getWidth(), SELECTOR_HEIGHT);
+        g.setColor(Color.black);
+        g.fillRect(0, getFractalWindowHeight() + 1, frame.getWidth(), SELECTOR_HEIGHT);
+        g.setColor(Color.white);
+        //Draw the generation information
+        g.drawString("Generation: " + generator.getGeneration() + "/" + generator.getTotalGenerations(), 15,
+                getFractalWindowHeight() + 15);
     }
 
     /**

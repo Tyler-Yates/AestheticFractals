@@ -22,6 +22,8 @@ public class EvolutionSelector extends JPanel {
         frame.setSize(150, 300);
         frame.setResizable(false);
         frame.setVisible(true);
+        //Don't let this window take focus away from the GraphicalInterface window
+        frame.setFocusableWindowState(false);
         frame.getContentPane().setLayout(new GridLayout(4, 2));
 
         //Add the title text to the windows
