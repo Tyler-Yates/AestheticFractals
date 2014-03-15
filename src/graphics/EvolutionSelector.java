@@ -17,6 +17,10 @@ public class EvolutionSelector extends JPanel {
 
 
     public EvolutionSelector(int x, int y) {
+        xEquation.setSelected(true);
+        yEquation.setSelected(true);
+        zEquation.setSelected(true);
+
         frame = new JFrame("Evolution Selector");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocation(x, y);
