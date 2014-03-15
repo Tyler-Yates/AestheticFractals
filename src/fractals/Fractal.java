@@ -218,10 +218,21 @@ public class Fractal implements Serializable {
      * @throws IOException
      */
     public void renderInGL() throws IOException {
+        //TODO Add proper Z, R, G, and B equations
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{
                 "C-Genetics/aesthetics", x.toString(), y.toString(), "x", "x", "y", "z"
         });
-        processBuilder.start();
+        //Tell the FocusListener to stop trying to regain focus
+        GraphicalInterface.focusListener.loseFocus();
+        Process p = processBuilder.start();
+        try {
+            p.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            //Now that the render window has closed, allow the FocusListener to regain focus
+            GraphicalInterface.focusListener.regainFocus();
+        }
     }
 
     /**
