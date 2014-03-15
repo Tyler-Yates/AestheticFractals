@@ -16,7 +16,7 @@ import java.nio.file.Paths;
  */
 public class Fractal implements Serializable {
     //The mathematical Equations that define the structure of the Fractal
-    private Equation x, y;
+    private Equation x, y, z;
     //The image representing the visualization of the fractal. This variable is transient to keep it from being
     // Serialized when the program state is saved.
     private transient BufferedImage img;
@@ -44,6 +44,7 @@ public class Fractal implements Serializable {
     public Fractal() {
         x = Equation.generateRandomXEquation();
         y = Equation.generateRandomYEquation();
+        z = Equation.generateRandomZEquation();
 
         //The ID for the fractal is the hash code of the Equations
         id = "f_" + x.hashCode() + y.hashCode();
@@ -58,6 +59,22 @@ public class Fractal implements Serializable {
     public Fractal(Equation x, Equation y) {
         this.x = x;
         this.y = y;
+
+        //The ID for the fractal is the hash code of the Equations
+        id = "f_" + x.hashCode() + y.hashCode();
+    }
+
+    /**
+     * Constructs a new Fractal with the given X, Y, and Z equations
+     *
+     * @param x
+     * @param y
+     * @param z
+     */
+    public Fractal(Equation x, Equation y, Equation z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
 
         //The ID for the fractal is the hash code of the Equations
         id = "f_" + x.hashCode() + y.hashCode();
@@ -100,8 +117,10 @@ public class Fractal implements Serializable {
         //Clone the Equations to prevent changes from altering the original Equations
         Equation cloneX = x.clone();
         Equation cloneY = y.clone();
+        Equation cloneZ = z.clone();
         Equation otherCloneX = f.x.clone();
         Equation otherCloneY = f.y.clone();
+        Equation otherCloneZ = f.z.clone();
 
         //Cross the cloned X and Y Equations
         if (GraphicalInterface.selector.xEquation.isSelected()) {
@@ -110,9 +129,12 @@ public class Fractal implements Serializable {
         if (GraphicalInterface.selector.yEquation.isSelected()) {
             cloneY.cross(otherCloneY);
         }
+        if (GraphicalInterface.selector.zEquation.isSelected()) {
+            cloneZ.cross(otherCloneZ);
+        }
 
         //Return a new Fractal defined by the new crossed Equations
-        return new Fractal(cloneX, cloneY);
+        return new Fractal(cloneX, cloneY, cloneZ);
     }
 
     /**
@@ -129,6 +151,7 @@ public class Fractal implements Serializable {
         //Clone the Equations to prevent changes from altering the original Equations.
         Equation cloneX = x.clone();
         Equation cloneY = y.clone();
+        Equation cloneZ = z.clone();
 
         //Mutate each of the Equations
         if (GraphicalInterface.selector.xEquation.isSelected()) {
@@ -137,9 +160,12 @@ public class Fractal implements Serializable {
         if (GraphicalInterface.selector.yEquation.isSelected()) {
             cloneY.mutate();
         }
+        if (GraphicalInterface.selector.zEquation.isSelected()) {
+            cloneZ.mutate();
+        }
 
         //Return a new Fractal defined by the mutated Equations
-        return new Fractal(cloneX, cloneY);
+        return new Fractal(cloneX, cloneY, cloneZ);
     }
 
     /**
@@ -149,7 +175,7 @@ public class Fractal implements Serializable {
      * @return
      */
     public Fractal clone() {
-        return new Fractal(x.clone(), y.clone());
+        return new Fractal(x.clone(), y.clone(), z.clone());
     }
 
     /**
@@ -181,7 +207,7 @@ public class Fractal implements Serializable {
                 "C-Genetics/aesthetics", "-save", "-p", "100000",
                 "-s", "" + image_width, "" + image_height,
                 IMAGE_PATH + id,
-                x.toString(), y.toString(), "0",
+                x.toString(), y.toString(), z.toString(),
                 "1", "1", "1"});
         try {
             Process p = processBuilder.start();
@@ -218,9 +244,9 @@ public class Fractal implements Serializable {
      * @throws IOException
      */
     public void renderInGL() throws IOException {
-        //TODO Add proper Z, R, G, and B equations
+        //TODO Add proper R, G, and B equations
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{
-                "C-Genetics/aesthetics", x.toString(), y.toString(), "x", "x", "y", "z"
+                "C-Genetics/aesthetics", x.toString(), y.toString(), z.toString(), "x", "y", "z"
         });
         //Tell the FocusListener to stop trying to regain focus
         GraphicalInterface.focusListener.loseFocus();

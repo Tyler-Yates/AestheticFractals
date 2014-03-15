@@ -11,6 +11,7 @@ public class EvolutionSelector extends JPanel {
 
     public static JCheckBox xEquation = new JCheckBox("x");
     public static JCheckBox yEquation = new JCheckBox("y");
+    public static JCheckBox zEquation = new JCheckBox("z");
     public static JCheckBox colorEquation = new JCheckBox("color");
     private static JLabel title = new JLabel(HTML_Formatting + "Select Equations to Evolve:");
 
@@ -24,7 +25,7 @@ public class EvolutionSelector extends JPanel {
         frame.setVisible(true);
         //Don't let this window take focus away from the GraphicalInterface window
         frame.setFocusableWindowState(false);
-        frame.getContentPane().setLayout(new GridLayout(4, 2));
+        frame.getContentPane().setLayout(new GridLayout(5, 2));
 
         //Add the title text to the windows
         frame.getContentPane().add(title);
@@ -32,6 +33,7 @@ public class EvolutionSelector extends JPanel {
         //Add the evolution selectors
         frame.getContentPane().add(xEquation);
         frame.getContentPane().add(yEquation);
+        frame.getContentPane().add(zEquation);
         frame.getContentPane().add(colorEquation);
     }
 }

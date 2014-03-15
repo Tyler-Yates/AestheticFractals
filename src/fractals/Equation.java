@@ -1,15 +1,15 @@
 package fractals;
 
+import de.congrace.exp4j.Calculable;
+import de.congrace.exp4j.ExpressionBuilder;
+import de.congrace.exp4j.UnknownFunctionException;
+import de.congrace.exp4j.UnparsableExpressionException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Stack;
-
-import de.congrace.exp4j.Calculable;
-import de.congrace.exp4j.UnknownFunctionException;
-import de.congrace.exp4j.UnparsableExpressionException;
-import de.congrace.exp4j.ExpressionBuilder;
 
 /**
  * Representation of an equation involving x and y. Uses the EXP4J library to convert an infix representation of the
@@ -49,7 +49,7 @@ public class Equation implements Serializable {
         try {
             //Turn the infix expression into a postfix expression using the EXP4J library
             Calculable calc = new ExpressionBuilder(expression)
-                    .withVariableNames("x", "y").build();
+                    .withVariableNames("x", "y", "z").build();
             String postfixExpression = calc.getExpression();
 
             //Get an array of the individual components of the postfix expression
@@ -183,6 +183,21 @@ public class Equation implements Serializable {
 
         return new Equation("sin( " + b + " * y ) + " + d + " * cos( " + b
                 + " * x )");
+    }
+
+    /**
+     * Returns a randomly generated equation in the general form of the Clifford Attractors
+     *
+     * @return
+     */
+    public static Equation generateRandomZEquation() {
+        double a, b;
+
+        //The ranges for the constants defined by Clifford
+        a = randomRange(-2, 2);
+        b = randomRange(-2, 2);
+
+        return new Equation(a + " * x + " + b + " * y");
     }
 
     /**
@@ -326,7 +341,7 @@ public class Equation implements Serializable {
 	}*/
 
     /**
-     * Evaluates the Equation by plugging in the given values for x and y in the expression tree
+     * Evaluates the Equation by plugging in the given values for x, y, and z in the expression tree
      *
      * @param x
      * @param y
@@ -336,9 +351,9 @@ public class Equation implements Serializable {
      * @throws UnknownFunctionException
      * @throws UnparsableExpressionException
      */
-    public double evaluate(double x, double y) throws UnknownFunctionException,
+    public double evaluate(double x, double y, double z) throws UnknownFunctionException,
             UnparsableExpressionException {
-        return evaluateParseTree(root, x, y);
+        return evaluateParseTree(root, x, y, z);
     }
 
     /**
@@ -350,7 +365,7 @@ public class Equation implements Serializable {
      *
      * @return
      */
-    public double evaluateParseTree(Node current, double x, double y) {
+    public double evaluateParseTree(Node current, double x, double y, double z) {
         //Don't evaluate non-existent Nodes
         if (current == null)
             return -1.0;
@@ -361,32 +376,34 @@ public class Equation implements Serializable {
                 return x;
             if (current.getValue().equals("y"))
                 return y;
+            if (current.getValue().equals("z"))
+                return z;
             return Double.parseDouble(current.getValue());
         }
 
         //Operators
         switch (current.getValue()) {
             case "+":
-                return evaluateParseTree(current.getLeft(), x, y)
-                        + evaluateParseTree(current.getRight(), x, y);
+                return evaluateParseTree(current.getLeft(), x, y, z)
+                        + evaluateParseTree(current.getRight(), x, y, z);
             case "-":
-                return evaluateParseTree(current.getLeft(), x, y)
-                        - evaluateParseTree(current.getRight(), x, y);
+                return evaluateParseTree(current.getLeft(), x, y, z)
+                        - evaluateParseTree(current.getRight(), x, y, z);
             case "*":
-                return evaluateParseTree(current.getLeft(), x, y)
-                        * evaluateParseTree(current.getRight(), x, y);
+                return evaluateParseTree(current.getLeft(), x, y, z)
+                        * evaluateParseTree(current.getRight(), x, y, z);
             case "/":
-                return evaluateParseTree(current.getLeft(), x, y)
-                        / evaluateParseTree(current.getRight(), x, y);
+                return evaluateParseTree(current.getLeft(), x, y, z)
+                        / evaluateParseTree(current.getRight(), x, y, z);
             case "^":
-                return Math.pow(evaluateParseTree(current.getLeft(), x, y),
-                        evaluateParseTree(current.getRight(), x, y));
+                return Math.pow(evaluateParseTree(current.getLeft(), x, y, z),
+                        evaluateParseTree(current.getRight(), x, y, z));
             case "sin":
-                return Math.sin(evaluateParseTree(current.getRight(), x, y));
+                return Math.sin(evaluateParseTree(current.getRight(), x, y, z));
             case "cos":
-                return Math.cos(evaluateParseTree(current.getRight(), x, y));
+                return Math.cos(evaluateParseTree(current.getRight(), x, y, z));
             case "tan":
-                return Math.tan(evaluateParseTree(current.getRight(), x, y));
+                return Math.tan(evaluateParseTree(current.getRight(), x, y, z));
             default:
                 return 0.0;
         }
