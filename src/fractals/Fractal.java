@@ -37,17 +37,15 @@ public class Fractal implements Serializable {
 
     //Define the ID for the Fractal
     private String id;
+    //Define the path to the image of the Fractal
+    private String fileName;
 
     /**
      * Constructs a new Fractal with randomly generated X and Y Equations
      */
     public Fractal() {
-        x = Equation.generateRandomXEquation();
-        y = Equation.generateRandomYEquation();
-        z = Equation.generateRandomZEquation();
-
-        //The ID for the fractal is the hash code of the Equations
-        id = "f_" + x.hashCode() + y.hashCode();
+        this(Equation.generateRandomXEquation(), Equation.generateRandomYEquation(),
+                Equation.generateRandomZEquation());
     }
 
     /**
@@ -57,11 +55,7 @@ public class Fractal implements Serializable {
      * @param y
      */
     public Fractal(Equation x, Equation y) {
-        this.x = x;
-        this.y = y;
-
-        //The ID for the fractal is the hash code of the Equations
-        id = "f_" + x.hashCode() + y.hashCode();
+        this(x, y, Equation.generateRandomZEquation());
     }
 
     /**
@@ -76,8 +70,23 @@ public class Fractal implements Serializable {
         this.y = y;
         this.z = z;
 
-        //The ID for the fractal is the hash code of the Equations
-        id = "f_" + x.hashCode() + y.hashCode();
+        setIdentification();
+    }
+
+    /**
+     * Sets the ID and fileName parameters of the current Fractal
+     */
+    private void setIdentification() {
+        if (x == null || y == null) {
+            id = "null";
+        }
+        else {
+            //The ID for the fractal is the hash code of the Equations
+            id = "f_" + x.hashCode() + y.hashCode();
+        }
+
+        //Use the ID to create the filename for the image
+        fileName = IMAGE_PATH + id + ".png";
     }
 
     /**
@@ -219,9 +228,36 @@ public class Fractal implements Serializable {
             e.printStackTrace();
         }
 
+        //Load the image file
+        try {
+            loadImage();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns whether or not the generated image is 'sparse' and thus aesthetically unpleasing
+     *
+     * @return
+     */
+    private boolean isSparseImage() {
+        File f = new File(fileName);
+        //Get the size of the image file in kilobytes
+        double sizeOfImage = f.length() / 1024.0;
+
+        //If the image size is less than the threshold value, it is sparse
+        if (sizeOfImage <= 1.0)
+            return true;
+        return false;
+    }
+
+    /**
+     * Loads the image file corresponding to the given fractal
+     */
+    private void loadImage() throws InterruptedException {
         //Load the image file. If it fails, retry a few times.
         int tries = 3;
-        String fileName = IMAGE_PATH + id + ".png";
         while (tries-- > 0) {
             try {
                 File f = new File(fileName);
@@ -234,6 +270,7 @@ public class Fractal implements Serializable {
             } catch (IOException e) {
                 System.err.println("File name: " + fileName);
                 e.printStackTrace();
+                Thread.sleep(500);
             }
         }
     }
