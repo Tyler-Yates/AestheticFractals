@@ -21,7 +21,7 @@ public class FileChooser {
         JFileChooser fileChooser = new JFileChooser();
 
         //Limit the files shown to only those of the given extension
-        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter(extension+" files", extension);
+        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter(extension + " files", extension);
         fileChooser.setFileFilter(fileNameExtensionFilter);
 
         //Set the default directory for the FileChooser to the AestheticFractals directory
@@ -34,8 +34,9 @@ public class FileChooser {
             File f = fileChooser.getSelectedFile();
             String path = f.getAbsolutePath();
             //Ensure that typed file names still include the given extension
-            if (!path.endsWith(extension))
+            if (!path.endsWith(extension)) {
                 path += "." + extension;
+            }
             return path;
         }
         //If the user pressed 'Cancel' return null
@@ -55,7 +56,7 @@ public class FileChooser {
         JFileChooser fileChooser = new JFileChooser();
 
         //Limit the files shown to only those of the given extension
-        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter(extension+" files", extension);
+        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter(extension + " files", extension);
         fileChooser.setFileFilter(fileNameExtensionFilter);
 
         //Set the default directory for the FileChooser to the AestheticFractals directory

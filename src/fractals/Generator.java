@@ -31,7 +31,9 @@ public class Generator implements Serializable {
      */
     public void renderFractalInGL(int i) throws IOException {
         //Ensure that the index is in bounds
-        if (fractals == null || i >= fractals.size()) return;
+        if (fractals == null || i >= fractals.size()) {
+            return;
+        }
         fractals.get(i).renderInGL();
     }
 
@@ -42,16 +44,18 @@ public class Generator implements Serializable {
      */
     public void generateNewGeneration() {
         //Add the old generation to the Stack of old generations if this is not the first generation
-        if (fractals != null)
+        if (fractals != null) {
             previous.push(fractals);
+        }
 
         //Increment the generation count
         generation++;
 
         //Find all of the Fractals that the user has selected
         for (int i = 0; i < GraphicalInterface.selectedFractals.length; i++) {
-            if (GraphicalInterface.selectedFractals[i])
+            if (GraphicalInterface.selectedFractals[i]) {
                 selectedFractals.add(fractals.get(i));
+            }
         }
 
         //Clear out the old Fractals
@@ -113,14 +117,17 @@ public class Generator implements Serializable {
      */
     public void decrementGeneration() {
         //Don't allow going before the first generation
-        if (previous.isEmpty()) return;
+        if (previous.isEmpty()) {
+            return;
+        }
 
         //Decrement the generation count
         generation--;
 
         //Push the current generation onto the Stack of future generations
-        if (fractals != null)
+        if (fractals != null) {
             next.push(fractals);
+        }
 
         //Fetch the previous generation
         fractals = previous.pop();
@@ -135,14 +142,17 @@ public class Generator implements Serializable {
      */
     public void incrementGeneration() {
         //Don't allow going past the last generation
-        if (next.isEmpty()) return;
+        if (next.isEmpty()) {
+            return;
+        }
 
         //Increment the generation count
         generation++;
 
         //Add the current generation to the Stack of previous generations
-        if (fractals != null)
+        if (fractals != null) {
             previous.push(fractals);
+        }
 
         //Fetch the previous generation of Fractals
         fractals = next.pop();

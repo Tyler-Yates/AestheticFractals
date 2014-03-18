@@ -136,8 +136,9 @@ public class Equation implements Serializable {
      */
     public void trace(Node current) {
         //Stop if we have gone past a leaf
-        if (current == null)
+        if (current == null) {
             return;
+        }
 
         nodes.add(current);
         trace(current.getLeft());
@@ -230,15 +231,19 @@ public class Equation implements Serializable {
         boolean isLeft, otherIsLeft;
         isLeft = (swap == parent.getLeft());
         otherIsLeft = (swapOther == parentOther.getLeft());
-        if (isLeft)
+        if (isLeft) {
             parent.setLeft(swapOther);
-        else
+        }
+        else {
             parent.setRight(swapOther);
+        }
 
-        if (otherIsLeft)
+        if (otherIsLeft) {
             parentOther.setLeft(swap);
-        else
+        }
+        else {
             parentOther.setRight(swap);
+        }
 
         //Swap the parents of the two swap Nodes
         swap.setParent(parentOther);
@@ -300,8 +305,9 @@ public class Equation implements Serializable {
      */
     private String updateExpression(Node current) {
         //Stop when we have gone past a leaf
-        if (current == null)
+        if (current == null) {
             return "";
+        }
 
         //Unary operators are in the form: abc( ... )
         if (current.isUnaryOperator()) {
@@ -320,8 +326,9 @@ public class Equation implements Serializable {
      * @param current
      */
     public void printTree(Node current) {
-        if (current == null)
+        if (current == null) {
             return;
+        }
 
         printTree(current.getLeft());
         System.out.print(current + " ");
@@ -367,17 +374,21 @@ public class Equation implements Serializable {
      */
     public double evaluateParseTree(Node current, double x, double y, double z) {
         //Don't evaluate non-existent Nodes
-        if (current == null)
+        if (current == null) {
             return -1.0;
+        }
 
         //Leaf Nodes can be either variables or constants
         if (current.isLeaf()) {
-            if (current.getValue().equals("x"))
+            if (current.getValue().equals("x")) {
                 return x;
-            if (current.getValue().equals("y"))
+            }
+            if (current.getValue().equals("y")) {
                 return y;
-            if (current.getValue().equals("z"))
+            }
+            if (current.getValue().equals("z")) {
                 return z;
+            }
             return Double.parseDouble(current.getValue());
         }
 
@@ -427,8 +438,9 @@ public class Equation implements Serializable {
      */
     public void mutate(Node n) {
         //Don't mutate non-existent Nodes
-        if (n == null)
+        if (n == null) {
             return;
+        }
 
         //Only mutate constants and only with a random chance
         if (n.isNumber() && Math.random() < MUTATE_CHANCE) {

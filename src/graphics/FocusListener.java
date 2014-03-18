@@ -34,7 +34,8 @@ public class FocusListener implements WindowFocusListener {
 
     @Override
     public void windowLostFocus(WindowEvent e) {
-        if (focus)
+        if (focus) {
             GraphicalInterface.frame.requestFocus();
+        }
     }
 }

@@ -382,8 +382,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         System.out.print("Saving...");
         //Open a dialog for the user to pick the file to save to
         String fileName = FileChooser.showSaveDialog(EXTENSION);
-        if (fileName == null)
+        if (fileName == null) {
             return;
+        }
         try (
                 OutputStream file = new FileOutputStream(fileName);
                 OutputStream buffer = new BufferedOutputStream(file);
@@ -404,8 +405,9 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         System.out.print("Loading...");
         //Open a dialog for the user to pick the file to load from
         String fileName = FileChooser.showLoadDialog(EXTENSION);
-        if (fileName == null)
+        if (fileName == null) {
             return;
+        }
         try (
                 InputStream file = new FileInputStream(fileName);
                 InputStream buffer = new BufferedInputStream(file);
