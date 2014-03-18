@@ -21,7 +21,7 @@ public class Fractal implements Serializable {
     // Serialized when the program state is saved.
     private transient BufferedImage img;
     //Represents whether the image of the fractal has finished rendering
-    private boolean isGenerating;
+    public boolean isGenerating;
 
     //Create the directory to store the image files
     static {
@@ -118,6 +118,8 @@ public class Fractal implements Serializable {
      *
      * The result of Fractal f (Parent 2) crossed with the current Fractal (Parent 1) is not computed.
      *
+     * This method returns a copy of the crossed Fractal. The current Fractal is unmodified.
+     *
      * @param f
      *
      * @return
@@ -154,6 +156,8 @@ public class Fractal implements Serializable {
      * constant,
      * there is a fixed chance that this constant is altered by a set amount.
      *
+     * This method returns a copy of the newly mutated Fractal. The current Fractal is unmodified.
+     *
      * @return
      */
     public Fractal mutate() {
@@ -175,6 +179,22 @@ public class Fractal implements Serializable {
 
         //Return a new Fractal defined by the mutated Equations
         return new Fractal(cloneX, cloneY, cloneZ);
+    }
+
+    /**
+     * Mutates the current Fractal in place such that the current Fractal is altered.
+     */
+    public void inPlaceMutate() {
+        //Mutate each of the Equations
+        if (GraphicalInterface.selector.xEquation.isSelected()) {
+            x.mutate();
+        }
+        if (GraphicalInterface.selector.yEquation.isSelected()) {
+            y.mutate();
+        }
+        if (GraphicalInterface.selector.zEquation.isSelected()) {
+            z.mutate();
+        }
     }
 
     /**
@@ -206,10 +226,12 @@ public class Fractal implements Serializable {
         are not divisible by 4. Thus, add a few pixels to the width and height if necessary to enforce divisibility
         by 4.
          */
-        if (image_width % 4 != 0)
+        if (image_width % 4 != 0) {
             image_width += 4 - image_width % 4;
-        if (image_height % 4 != 0)
+        }
+        if (image_height % 4 != 0) {
             image_height += 4 - image_height;
+        }
 
         //Call the C-Backend to render the image and save it to a file
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{
@@ -227,13 +249,6 @@ public class Fractal implements Serializable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        //Load the image file
-        try {
-            loadImage();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -241,27 +256,32 @@ public class Fractal implements Serializable {
      *
      * @return
      */
-    private boolean isSparseImage() {
+    public boolean isSparseImage() {
         File f = new File(fileName);
         //Get the size of the image file in kilobytes
         double sizeOfImage = f.length() / 1024.0;
 
         //If the image size is less than the threshold value, it is sparse
-        if (sizeOfImage <= 1.0)
+        if (sizeOfImage <= 1.0) {
             return true;
+        }
         return false;
     }
 
     /**
      * Loads the image file corresponding to the given fractal
      */
-    private void loadImage() throws InterruptedException {
+    public void loadImage() throws InterruptedException {
         //Load the image file. If it fails, retry a few times.
         int tries = 3;
         while (tries-- > 0) {
             try {
                 File f = new File(fileName);
                 img = ImageIO.read(f);
+
+                //Force a repaint of the window to draw the newly rendered Fractal
+                GraphicalInterface.frame.getContentPane().repaint();
+
                 //Delete the image file on disk to prevent the image folder from filling up the disk
                 f.delete();
 
@@ -325,6 +345,16 @@ public class Fractal implements Serializable {
             g.drawImage(img, x, y, GraphicalInterface.frame.getWidth() / 3,
                     GraphicalInterface.frame.getHeight() / 3,
                     GraphicalInterface.frame);
+        }
+    }
+
+    /**
+     * Deletes files created on the disk by the current Fractal
+     */
+    public void discard() {
+        File f = new File(fileName);
+        if (f.exists()) {
+            f.delete();
         }
     }
 }
