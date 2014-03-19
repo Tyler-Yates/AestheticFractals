@@ -15,11 +15,11 @@ public class Generator implements Serializable {
     private int generation = 0; // The current generation's number
 
     ArrayList<Fractal> fractals;  // Current generation of Fractals
-    ArrayList<Fractal> selectedFractals = new ArrayList<Fractal>(9);  //The list of fractals that have been selected
+    ArrayList<Fractal> selectedFractals = new ArrayList<>(9);  //The list of fractals that have been selected
     // by the user
 
-    Stack<ArrayList<Fractal>> previous = new Stack<ArrayList<Fractal>>(); //The previous generations of Fractals
-    Stack<ArrayList<Fractal>> next = new Stack<ArrayList<Fractal>>(); //The future generations of Fractals (if the
+    Stack<ArrayList<Fractal>> previous = new Stack<>(); //The previous generations of Fractals
+    Stack<ArrayList<Fractal>> next = new Stack<>(); //The future generations of Fractals (if the
     // user has gone back to previous generations)
 
     /**
@@ -59,7 +59,7 @@ public class Generator implements Serializable {
         }
 
         //Clear out the old Fractals
-        fractals = new ArrayList<Fractal>(9);
+        fractals = new ArrayList<>(9);
 
         //Generate the new Fractals one by one
         Fractal newFractal;
@@ -70,24 +70,28 @@ public class Generator implements Serializable {
             }
             else {
                 //Choose a random parent for the new Fractal from the pool of user-selected Fractals
-                Fractal Parent1 = selectedFractals.get((int) (Math.random() * selectedFractals.size()));
+                Fractal parent1 = selectedFractals.get((int) (Math.random() * selectedFractals.size()));
                 //For the first row of Fractals, perform Cross-over
                 if (i < 3) {
                         /*
                         Cross-over requires a second parent. Choose this second parent from the pool of user-selected
                          Fractals.
-                        Parent1 and Parent2 can refer to the same Fractal.
+                        parent1 and parent2 can refer to the same Fractal.
                          */
-                    Fractal Parent2 = selectedFractals.get((int) (Math.random() * selectedFractals.size()));
-                    newFractal = Parent1.cross(Parent2);
+                    Fractal parent2 = selectedFractals.get((int) (Math.random() * selectedFractals.size()));
+                    newFractal = parent1.cross(parent2);
+                    //Fill in information about the Fractal's creation
+                    newFractal.setOperation("cross");
+                    newFractal.setParents(parent1, parent2);
                 }
                 else if (i < 6) {
                     //For the second row of Fractals, perform mutation
-                    newFractal = Parent1.mutate();
+                    newFractal = parent1.mutate();
+                    newFractal.setOperation("mutate");
                 }
                 else {
                     //For the third row of Fractals, perform cloning
-                    newFractal = Parent1.clone();
+                    newFractal = parent1.clone();
                 }
             }
             //Add the new Fractal to the new generation

@@ -23,6 +23,11 @@ public class Fractal implements Serializable {
     //Represents whether the image of the fractal has finished rendering
     public boolean isGenerating;
 
+    //Defines what operation produced this fractal: crossing, mutation, cloning, etc.
+    private String operation = "";
+    //Defines the parent Fractals if this Fractal's operation was crossing
+    private Fractal parent1, parent2;
+
     //Create the directory to store the image files
     static {
         try {
@@ -87,6 +92,49 @@ public class Fractal implements Serializable {
 
         //Use the ID to create the filename for the image
         fileName = IMAGE_PATH + id + ".png";
+    }
+
+    /**
+     * Sets the operation that created this Fractal.
+     * For example, if this Fractal was created as a result of crossing two other Fractals, the operation should be
+     * "cross".
+     *
+     * @param op
+     */
+    public void setOperation(String op) {
+        operation = op.toLowerCase();
+    }
+
+    /**
+     * Sets the parents of the current Fractal.
+     *
+     * @param p1
+     * @param p2
+     */
+    public void setParents(Fractal p1, Fractal p2) {
+        parent1 = p1;
+        parent2 = p2;
+    }
+
+    /**
+     * Creates the current Fractal over again.
+     */
+    public void redo() {
+        if (operation.equals("cross") && parent1 != null && parent2 != null) {
+            Fractal newFractal = parent1.cross(parent2);
+
+            x = newFractal.getX();
+            y = newFractal.getY();
+            z = newFractal.getZ();
+        }
+        else if(operation.equals("mutate")) {
+            inPlaceMutate();
+        }
+        else {
+            x = Equation.generateRandomXEquation();
+            y = Equation.generateRandomYEquation();
+            z = Equation.generateRandomZEquation();
+        }
     }
 
     /**
@@ -346,6 +394,36 @@ public class Fractal implements Serializable {
                     GraphicalInterface.frame.getHeight() / 3,
                     GraphicalInterface.frame);
         }
+    }
+
+    /**
+     * Returns the X equation of the current Fractal. The returned Equation is not a clone so any changes made to the
+     * returned Equation will affect the current Fractal.
+     *
+     * @return
+     */
+    public Equation getX() {
+        return x;
+    }
+
+    /**
+     * Returns the Y equation of the current Fractal. The returned Equation is not a clone so any changes made to the
+     * returned Equation will affect the current Fractal.
+     *
+     * @return
+     */
+    public Equation getY() {
+        return y;
+    }
+
+    /**
+     * Returns the Z equation of the current Fractal. The returned Equation is not a clone so any changes made to the
+     * returned Equation will affect the current Fractal.
+     *
+     * @return
+     */
+    public Equation getZ() {
+        return z;
     }
 
     /**
