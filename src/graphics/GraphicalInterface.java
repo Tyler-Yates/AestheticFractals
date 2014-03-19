@@ -58,7 +58,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     private static final String EXTENSION = "ser";
 
     //Defines the height of the evolution selector at the bottom of the screen
-    private static final int SELECTOR_HEIGHT = 100;
+    public static final int SELECTOR_HEIGHT = 100;
     public static EvolutionSelector selector;
 
     public static FocusListener focusListener;

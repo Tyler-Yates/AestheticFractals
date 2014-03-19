@@ -391,7 +391,7 @@ public class Fractal implements Serializable {
             //We are no longer generating the image
             isGenerating = false;
             g.drawImage(img, x, y, GraphicalInterface.frame.getWidth() / 3,
-                    GraphicalInterface.frame.getHeight() / 3,
+                    (GraphicalInterface.frame.getHeight() - GraphicalInterface.SELECTOR_HEIGHT) / 3,
                     GraphicalInterface.frame);
         }
     }
