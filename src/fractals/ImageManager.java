@@ -19,10 +19,11 @@ public class ImageManager {
 
         public void run() {
             f.generateImage();
-            int retries = 0;
+            int retries;
 
             //Try to mutate a sparse Fractal to get a less sparse one. If that fails, then recreate the Fractal again.
             do {
+                retries = 0;
                 //If the fractal is aesthetically unpleasing, mutate it
                 while (f.isSparseImage() && retries++ < MAX_RETRIES) {
                     f.discard();
