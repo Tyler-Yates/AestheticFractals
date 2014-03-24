@@ -331,7 +331,7 @@ public class Fractal implements Serializable {
                 GraphicalInterface.frame.getContentPane().repaint();
 
                 //Delete the image file on disk to prevent the image folder from filling up the disk
-                f.delete();
+                discard();
 
                 //If we successfully read in the image, we are done with the method
                 return;

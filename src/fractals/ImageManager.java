@@ -6,6 +6,9 @@ package fractals;
  * as possible.
  */
 public class ImageManager {
+    //Defines whether or not the ImageManager will perform filtering of generated Fractals
+    private static final boolean PERFORM_FILTERING = true;
+
     // Threaded generator for creating the image
     static class ImageGeneratorThread extends Thread {
         private Fractal f;
@@ -18,25 +21,31 @@ public class ImageManager {
         }
 
         public void run() {
+            //Generate the image for the Fractal
             f.generateImage();
-            int retries;
 
-            //Try to mutate a sparse Fractal to get a less sparse one. If that fails, then recreate the Fractal again.
-            do {
-                retries = 0;
-                //If the fractal is aesthetically unpleasing, mutate it
-                while (f.isSparseImage() && retries++ < MAX_RETRIES) {
-                    f.discard();
-                    f.inPlaceMutate();
-                    f.generateImage();
-                }
-                //If the Fractal is still sparse after MAX_RETRIES attempts of mutation, recreate the Fractal again
-                if (f.isSparseImage()) {
-                    f.discard();
-                    f.redo();
-                    f.generateImage();
-                }
-            } while (f.isSparseImage());
+            //If we should perform filtering make sure the Fractal is not sparse
+            if (PERFORM_FILTERING) {
+                //Counts how many times the current Fractal has been mutated
+                int retries;
+                //Try to mutate a sparse Fractal to get a less sparse one. If that fails,
+                //then recreate the Fractal again.
+                do {
+                    retries = 0;
+                    //If the fractal is aesthetically unpleasing, mutate it
+                    while (f.isSparseImage() && retries++ < MAX_RETRIES) {
+                        f.discard();
+                        f.inPlaceMutate();
+                        f.generateImage();
+                    }
+                    //If the Fractal is still sparse after MAX_RETRIES attempts of mutation, recreate the Fractal again
+                    if (f.isSparseImage()) {
+                        f.discard();
+                        f.redo();
+                        f.generateImage();
+                    }
+                } while (f.isSparseImage());
+            }
 
             //Load the image file for the Fractal
             try {
