@@ -127,7 +127,7 @@ public class Fractal implements Serializable {
             y = newFractal.getY();
             z = newFractal.getZ();
         }
-        else if(operation.equals("mutate")) {
+        else if (operation.equals("mutate")) {
             inPlaceMutate();
         }
         else {
@@ -253,6 +253,32 @@ public class Fractal implements Serializable {
      */
     public Fractal clone() {
         return new Fractal(x.clone(), y.clone(), z.clone());
+    }
+
+    /**
+     * Performs introduction on the current Fractal. This method returns a copy of the new Fractal. The current Fractal
+     * is unmodified.
+     *
+     * @return
+     */
+    public Fractal introduce() {
+        Equation cloneX = x.clone();
+        Equation cloneY = y.clone();
+        Equation cloneZ = z.clone();
+
+        //Cross the cloned X and Y Equations
+        if (GraphicalInterface.selector.xEquation.isSelected()) {
+            cloneX.introduce();
+        }
+        if (GraphicalInterface.selector.yEquation.isSelected()) {
+            cloneY.introduce();
+        }
+        if (GraphicalInterface.selector.zEquation.isSelected()) {
+            cloneZ.introduce();
+        }
+
+        //Return a new Fractal defined by the new crossed Equations
+        return new Fractal(cloneX, cloneY, cloneZ);
     }
 
     /**

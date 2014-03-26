@@ -90,8 +90,8 @@ public class Generator implements Serializable {
                     newFractal.setOperation("mutate");
                 }
                 else {
-                    //For the third row of Fractals, perform cloning
-                    newFractal = parent1.clone();
+                    //For the third row of Fractals, perform introduction
+                    newFractal = parent1.introduce();
                 }
             }
             //Add the new Fractal to the new generation

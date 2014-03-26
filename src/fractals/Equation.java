@@ -36,7 +36,9 @@ public class Equation implements Serializable {
     //The root of the expression tree
     private Node root;
     //The list of all Nodes in the tree
-    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<Node> nodes = new ArrayList<>();
+    //The list of all leaves in the tree
+    private ArrayList<Node> leaves = new ArrayList<>();
 
     /**
      * Creates an Equation Object from a given infix expression.
@@ -56,7 +58,7 @@ public class Equation implements Serializable {
             String arr[] = postfixExpression.split(" ");
 
             //The stack that will be used to build the expression tree
-            Stack<Node> stack = new Stack<Node>();
+            Stack<Node> stack = new Stack<>();
 
             //Loop through each component of the postfix expression. A component can be either a number, variable,
             // or operator
@@ -114,9 +116,7 @@ public class Equation implements Serializable {
 
             //Create a list of all Nodes in the expression tree
             trace();
-        } catch (UnknownFunctionException e) {
-            e.printStackTrace();
-        } catch (UnparsableExpressionException e) {
+        } catch (UnknownFunctionException | UnparsableExpressionException e) {
             e.printStackTrace();
         }
     }
@@ -125,7 +125,9 @@ public class Equation implements Serializable {
      * Traverses the expression using pre-order to create a list of all Nodes in the expression tree
      */
     public void trace() {
+        //Clear the current lists of Nodes to prevent duplicates
         nodes.clear();
+        leaves.clear();
         trace(root);
     }
 
@@ -141,6 +143,13 @@ public class Equation implements Serializable {
         }
 
         nodes.add(current);
+
+        //If the node is a leaf add it to the list of leaves
+        if (current.getLeft() == null && current.getRight() == null) {
+            leaves.add(current);
+        }
+
+        //Recursively trace down the left and right children
         trace(current.getLeft());
         trace(current.getRight());
     }
@@ -457,6 +466,91 @@ public class Equation implements Serializable {
         mutate(n.getLeft());
         mutate(n.getRight());
     }
+
+    /**
+     * Introduces a new subtree into the expression tree of the current Equation.
+     */
+    public void introduce() {
+        //Pick a random Node to serve as the "root" of the introduced subtree
+        Node subtreeRoot = leaves.get((int)(Math.random()*leaves.size()));
+        introduce(subtreeRoot);
+        //Update the Equation to reflect the new changes
+        trace();
+        updateExpression();
+    }
+
+    /**
+     * Helper method used by introduce().
+     *
+     * @param n
+     */
+    public void introduce(Node n) {
+        //Don't perform introduction on non-existent Nodes
+        if (n == null) {
+            return;
+        }
+
+        //Create a new expression tree
+        Node subtree = createRandomExpressionTree();
+
+        //Change the given Node into the created subtree
+        n.setValue(subtree.getValue());
+        n.setLeft(subtree.getLeft());
+        n.setRight(subtree.getRight());
+    }
+
+    /**
+     * Creates a random expression tree and returns the root Node of that tree.
+     *
+     * @return
+     */
+    private Node createRandomExpressionTree() {
+        //Create a random Node to serve as the root of the new expression tree
+        Node treeRoot = createRandomNode();
+        //Fill out the expression tree
+        fillExpressionTree(treeRoot);
+
+        return treeRoot;
+    }
+
+    /**
+     * Fills out the expression tree rooted at the given Node. This method checks whether the given Node is an operator
+     * and if so will create random nodes to serve as the children to that Node. This method will then recursively fill
+     * out the expression trees for each of the children until only constants are at the leaves.
+     *
+     * @param n
+     */
+    private void fillExpressionTree(Node n) {
+        //Don't modify a null Node
+        if (n == null) {
+            return;
+        }
+
+        if (n.isBinaryOperator()) {
+            //Create random Nodes for the left and right children
+            n.setLeft(createRandomNode());
+            n.setRight(createRandomNode());
+
+            //Fill each of the left and right subtrees
+            fillExpressionTree(n.getLeft());
+            fillExpressionTree(n.getRight());
+        }
+        else if (n.isUnaryOperator()) {
+            //Unary operators have only a single child which is the right Node
+            n.setRight(createRandomNode());
+            fillExpressionTree(n.getRight());
+        }
+        //If the Node is just a constant we no longer need to do any filling
+    }
+
+    /**
+     * Creates a Node with a random value.
+     *
+     * @return
+     */
+    private Node createRandomNode() {
+        return new Node(Node.getRandomValue());
+    }
 }
 
 /**
@@ -470,10 +564,10 @@ class Node implements Serializable {
     private Node left, right, parent;
 
     //Defines the set of unary operators supported by Node
-    private static final HashSet<String> unaryOperators = new HashSet<String>(
-            Arrays.asList("sin", "cos", "tan", "abs"));
+    private static final HashSet<String> unaryOperators = new HashSet<>(
+            Arrays.asList("sin", "cos", "abs"));
     //Defines the set of binary operators supported by Node
-    private static final HashSet<String> binaryOperators = new HashSet<String>(
+    private static final HashSet<String> binaryOperators = new HashSet<>(
             Arrays.asList("*", "+", "-", "/", "^"));
 
     /**
@@ -483,6 +577,26 @@ class Node implements Serializable {
      */
     public Node(String value) {
         this.value = value;
+    }
+
+    /**
+     * Returns a random value. This value can be either an operator or a constant.
+     *
+     * @return
+     */
+    public static String getRandomValue() {
+        //Create a list of all recognized operators
+        ArrayList<String> operators = new ArrayList<>();
+        operators.addAll(unaryOperators);
+        operators.addAll(binaryOperators);
+
+        //Determine if the method will return an operator or a constant
+        if (Math.random() < 0.25) {
+            return operators.get((int) (Math.random() * operators.size()));
+        }
+        else {
+            return "" + Equation.randomRange(-2, 2);
+        }
     }
 
     /**
