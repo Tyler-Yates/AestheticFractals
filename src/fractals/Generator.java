@@ -43,6 +43,10 @@ public class Generator implements Serializable {
      * user had selected in the previous generation.
      */
     public void generateNewGeneration() {
+        //Halt all of the ImageManager threads from the previous generation to prevent slow-downs in the current
+        // generation
+        ImageManager.interruptThreads();
+
         //Add the old generation to the Stack of old generations if this is not the first generation
         if (fractals != null) {
             previous.push(fractals);
@@ -127,6 +131,10 @@ public class Generator implements Serializable {
             return;
         }
 
+        //Halt all of the ImageManager threads from the previous generation to prevent slow-downs in the current
+        // generation
+        ImageManager.interruptThreads();
+
         //Decrement the generation count
         generation--;
 
@@ -151,6 +159,10 @@ public class Generator implements Serializable {
         if (next.isEmpty()) {
             return;
         }
+
+        //Halt all of the ImageManager threads from the previous generation to prevent slow-downs in the current
+        // generation
+        ImageManager.interruptThreads();
 
         //Increment the generation count
         generation++;
