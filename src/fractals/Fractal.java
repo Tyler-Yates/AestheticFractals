@@ -130,6 +130,13 @@ public class Fractal implements Serializable {
         else if (operation.equals("mutate")) {
             inPlaceMutate();
         }
+        else if (operation.equals("introduce") && parent1 != null) {
+            Fractal newFractal = parent1.introduce();
+
+            x = newFractal.getX();
+            y = newFractal.getY();
+            z = newFractal.getZ();
+        }
         else {
             x = Equation.generateRandomXEquation();
             y = Equation.generateRandomYEquation();

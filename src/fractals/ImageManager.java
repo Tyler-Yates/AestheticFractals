@@ -14,7 +14,7 @@ public class ImageManager {
         private Fractal f;
         //Defines the maximum number of times an aesthetically unpleasing Fractal can be mutated to attempt to create
         // a more pleasing image
-        private static final int MAX_RETRIES = 8;
+        private static final int MAX_RETRIES = 5;
 
         public ImageGeneratorThread(Fractal f) {
             this.f = f;

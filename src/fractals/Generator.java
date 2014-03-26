@@ -92,6 +92,8 @@ public class Generator implements Serializable {
                 else {
                     //For the third row of Fractals, perform introduction
                     newFractal = parent1.introduce();
+                    newFractal.setOperation("introduce");
+                    newFractal.setParents(parent1, null);
                 }
             }
             //Add the new Fractal to the new generation
