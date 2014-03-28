@@ -320,7 +320,7 @@ public class Fractal implements Serializable {
                 "-s", "" + image_width, "" + image_height,
                 IMAGE_PATH + id,
                 x.toString(), y.toString(), z.toString(),
-                "1", "1", "1"});
+                "x", "y", "z"});
         try {
             Process p = processBuilder.start();
             p.waitFor();
