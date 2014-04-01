@@ -1,6 +1,7 @@
 package graphics;
 
 import fractals.Generator;
+import fractals.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -390,6 +391,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
                 OutputStream buffer = new BufferedOutputStream(file);
                 ObjectOutput output = new ObjectOutputStream(buffer);
         ) {
+            //Stop the current Threads as we are discarding the current program state
+            ImageManager.interruptThreads();
             output.writeObject(generator);
             System.out.println("Done!");
         } catch (IOException ex) {
@@ -413,6 +416,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
                 InputStream buffer = new BufferedInputStream(file);
                 ObjectInput input = new ObjectInputStream(buffer);
         ) {
+            //Stop the current Threads as we are discarding the current program state
+            ImageManager.interruptThreads();
             generator = (Generator) input.readObject();
             System.out.println("Done!");
             repaint();
