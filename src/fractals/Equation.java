@@ -83,6 +83,21 @@ public class Equation implements Serializable {
                 if (!n.isOperator()) {
                     stack.push(n);
                 }
+                else if (n.isTernaryOperator()) {
+                    //Ternary operators operators have left, middle, and right children.
+                    Node right = stack.pop();
+                    Node left = stack.pop();
+                    Node middle = stack.pop();
+
+                    n.setLeft(left);
+                    n.setRight(right);
+                    n.setMiddle(middle);
+                    left.setParent(n);
+                    right.setParent(n);
+                    middle.setParent(n);
+
+                    stack.push(n);
+                }
                 else if (n.isBinaryOperator()) {
                     //Binary operators (+-*/ ...) have left and right children.
                     Node right = stack.pop();
@@ -145,13 +160,14 @@ public class Equation implements Serializable {
         nodes.add(current);
 
         //If the node is a leaf add it to the list of leaves
-        if (current.getLeft() == null && current.getRight() == null) {
+        if (current.isLeaf()) {
             leaves.add(current);
         }
 
         //Recursively trace down the left and right children
         trace(current.getLeft());
         trace(current.getRight());
+        trace(current.getMiddle());
     }
 
     /**
@@ -235,13 +251,19 @@ public class Equation implements Serializable {
         parent = swap.getParent();
         parentOther = swapOther.getParent();
 
-        //Determine if the swap Nodes are the left or right children of their parents in order to update the
-        // left/right pointers of the parents
+        //Determine if the swap Nodes are the left, middle, or right children of their parents in order to update the
+        // left/middle/right pointers of the parents
         boolean isLeft, otherIsLeft;
         isLeft = (swap == parent.getLeft());
         otherIsLeft = (swapOther == parentOther.getLeft());
+        boolean isMiddle, otherIsMiddle;
+        isMiddle = (swap == parent.getMiddle());
+        otherIsMiddle = (swapOther == parentOther.getMiddle());
         if (isLeft) {
             parent.setLeft(swapOther);
+        }
+        else if (isMiddle) {
+            parent.setMiddle(swapOther);
         }
         else {
             parent.setRight(swapOther);
@@ -249,6 +271,9 @@ public class Equation implements Serializable {
 
         if (otherIsLeft) {
             parentOther.setLeft(swap);
+        }
+        else if (otherIsMiddle) {
+            parentOther.setMiddle(swap);
         }
         else {
             parentOther.setRight(swap);
@@ -322,6 +347,12 @@ public class Equation implements Serializable {
         if (current.isUnaryOperator()) {
             return current + "(" + updateExpression(current.getRight()) + ")";
         }
+        //Ternary operators are in the form:
+        // if (expA) { expB } { expC }
+        else if (current.isTernaryOperator()) {
+            return current + "(" + updateExpression(current.getMiddle()) + ")" + "{" + updateExpression(current
+                    .getLeft()) + "}{" + updateExpression(current.getRight()) + "}";
+        }
         else {
             //Binary operators, constants, and variables are in the form ... abc ...
             return updateExpression(current.getLeft()) + current
@@ -339,8 +370,11 @@ public class Equation implements Serializable {
             return;
         }
 
+        System.out.print(current + " # ");
+        printTree(current.getMiddle());
+        System.out.print(" # ");
         printTree(current.getLeft());
-        System.out.print(current + " ");
+        System.out.print(" # ");
         printTree(current.getRight());
     }
 
@@ -357,82 +391,8 @@ public class Equation implements Serializable {
 	}*/
 
     /**
-     * Evaluates the Equation by plugging in the given values for x, y, and z in the expression tree
-     *
-     * @param x
-     * @param y
-     *
-     * @return
-     *
-     * @throws UnknownFunctionException
-     * @throws UnparsableExpressionException
-     */
-    public double evaluate(double x, double y, double z) throws UnknownFunctionException,
-            UnparsableExpressionException {
-        return evaluateParseTree(root, x, y, z);
-    }
-
-    /**
-     * Helper method used by evaluate(x,y)
-     *
-     * @param current
-     * @param x
-     * @param y
-     *
-     * @return
-     */
-    public double evaluateParseTree(Node current, double x, double y, double z) {
-        //Don't evaluate non-existent Nodes
-        if (current == null) {
-            return -1.0;
-        }
-
-        //Leaf Nodes can be either variables or constants
-        if (current.isLeaf()) {
-            if (current.getValue().equals("x")) {
-                return x;
-            }
-            if (current.getValue().equals("y")) {
-                return y;
-            }
-            if (current.getValue().equals("z")) {
-                return z;
-            }
-            return Double.parseDouble(current.getValue());
-        }
-
-        //Operators
-        switch (current.getValue()) {
-            case "+":
-                return evaluateParseTree(current.getLeft(), x, y, z)
-                        + evaluateParseTree(current.getRight(), x, y, z);
-            case "-":
-                return evaluateParseTree(current.getLeft(), x, y, z)
-                        - evaluateParseTree(current.getRight(), x, y, z);
-            case "*":
-                return evaluateParseTree(current.getLeft(), x, y, z)
-                        * evaluateParseTree(current.getRight(), x, y, z);
-            case "/":
-                return evaluateParseTree(current.getLeft(), x, y, z)
-                        / evaluateParseTree(current.getRight(), x, y, z);
-            case "^":
-                return Math.pow(evaluateParseTree(current.getLeft(), x, y, z),
-                        evaluateParseTree(current.getRight(), x, y, z));
-            case "sin":
-                return Math.sin(evaluateParseTree(current.getRight(), x, y, z));
-            case "cos":
-                return Math.cos(evaluateParseTree(current.getRight(), x, y, z));
-            case "tan":
-                return Math.tan(evaluateParseTree(current.getRight(), x, y, z));
-            default:
-                return 0.0;
-        }
-    }
-
-    /**
      * Mutates the current Equation by altering the constants of the expression tree. Each constant in the expression
-     * tree is
-     * visited and has a random chance of being altered by a set amount.
+     * tree is visited and has a random chance of being altered by a set amount.
      */
     public void mutate() {
         mutate(root);
@@ -472,11 +432,14 @@ public class Equation implements Serializable {
      */
     public void introduce() {
         //Pick a random Node to serve as the "root" of the introduced subtree
-        Node subtreeRoot = leaves.get((int)(Math.random()*leaves.size()));
+        Node subtreeRoot = leaves.get((int) (Math.random() * leaves.size()));
         introduce(subtreeRoot);
+
         //Update the Equation to reflect the new changes
         trace();
         updateExpression();
+
+        System.out.println(expression);
     }
 
     /**
@@ -497,6 +460,7 @@ public class Equation implements Serializable {
         n.setValue(subtree.getValue());
         n.setLeft(subtree.getLeft());
         n.setRight(subtree.getRight());
+        n.setMiddle(subtree.getMiddle());
     }
 
     /**
@@ -526,10 +490,31 @@ public class Equation implements Serializable {
             return;
         }
 
-        if (n.isBinaryOperator()) {
+        if (n.isTernaryOperator()) {
+            //Create random Nodes for the left, middle, and right children
+            Node left = createRandomNode();
+            left.setParent(n);
+            n.setLeft(left);
+            Node right = createRandomNode();
+            right.setParent(n);
+            n.setRight(right);
+            Node middle = createRandomNode();
+            middle.setParent(n);
+            n.setMiddle(middle);
+
+            //Fill each of the left, middle, and right subtrees
+            fillExpressionTree(n.getLeft());
+            fillExpressionTree(n.getRight());
+            fillExpressionTree(n.getMiddle());
+        }
+        else if (n.isBinaryOperator()) {
             //Create random Nodes for the left and right children
-            n.setLeft(createRandomNode());
-            n.setRight(createRandomNode());
+            Node left = createRandomNode();
+            left.setParent(n);
+            n.setLeft(left);
+            Node right = createRandomNode();
+            right.setParent(n);
+            n.setRight(right);
 
             //Fill each of the left and right subtrees
             fillExpressionTree(n.getLeft());
@@ -537,7 +522,9 @@ public class Equation implements Serializable {
         }
         else if (n.isUnaryOperator()) {
             //Unary operators have only a single child which is the right Node
-            n.setRight(createRandomNode());
+            Node right = createRandomNode();
+            right.setParent(n);
+            n.setRight(right);
             fillExpressionTree(n.getRight());
         }
         //If the Node is just a constant we no longer need to do any filling
@@ -561,7 +548,7 @@ class Node implements Serializable {
     private String value;
 
     //Represents the links for the current node
-    private Node left, right, parent;
+    private Node left, right, middle, parent;
 
     //Defines the set of unary operators supported by Node
     private static final HashSet<String> unaryOperators = new HashSet<>(
@@ -569,6 +556,8 @@ class Node implements Serializable {
     //Defines the set of binary operators supported by Node
     private static final HashSet<String> binaryOperators = new HashSet<>(
             Arrays.asList("*", "+", "-", "/", "^"));
+    //Defines the set of ternary operators supported by Node
+    private static final HashSet<String> ternaryOperators = new HashSet<>(Arrays.asList("if"));
 
     /**
      * Creates a Node with the given value
@@ -589,13 +578,21 @@ class Node implements Serializable {
         ArrayList<String> operators = new ArrayList<>();
         operators.addAll(unaryOperators);
         operators.addAll(binaryOperators);
+        operators.addAll(ternaryOperators);
+
+        //Create a list of possible leaf values
+        ArrayList<String> leaves = new ArrayList<>();
+        leaves.add(""+Equation.randomRange(-2,2));
+        leaves.add("x");
+        leaves.add("y");
+        leaves.add("z");
 
         //Determine if the method will return an operator or a constant
-        if (Math.random() < 0.25) {
+        if (Math.random() < 0.35) {
             return operators.get((int) (Math.random() * operators.size()));
         }
         else {
-            return "" + Equation.randomRange(-2, 2);
+            return "" + leaves.get((int) (Math.random() * leaves.size()));
         }
     }
 
@@ -645,7 +642,7 @@ class Node implements Serializable {
      * @return
      */
     public boolean isLeaf() {
-        return left == null && right == null;
+        return left == null && right == null && middle == null;
     }
 
     /**
@@ -686,7 +683,7 @@ class Node implements Serializable {
      * @return
      */
     public boolean isOperator() {
-        return isUnaryOperator() || isBinaryOperator();
+        return isUnaryOperator() || isBinaryOperator() || isTernaryOperator();
     }
 
     /**
@@ -708,6 +705,15 @@ class Node implements Serializable {
     }
 
     /**
+     * Returns whether the current Node represents a ternary operator
+     *
+     * @return
+     */
+    public boolean isTernaryOperator() {
+        return ternaryOperators.contains(value);
+    }
+
+    /**
      * Sets the right child pointer of the current Node to the given Node.
      * The old right child Node is returned.
      *
@@ -718,6 +724,20 @@ class Node implements Serializable {
     public Node setRight(Node newNode) {
         Node oldNode = right;
         right = newNode;
+        return oldNode;
+    }
+
+    /**
+     * Sets the middle child pointer of the current Node to the given Node.
+     * The old middle child Node is returned.
+     *
+     * @param newNode
+     *
+     * @return
+     */
+    public Node setMiddle(Node newNode) {
+        Node oldNode = middle;
+        middle = newNode;
         return oldNode;
     }
 
@@ -739,6 +759,15 @@ class Node implements Serializable {
         return right;
     }
 
+    /**
+     * Returns the middle child of the current Node
+     *
+     * @return
+     */
+    public Node getMiddle() {
+        return middle;
+    }
+
     public String toString() {
         return value;
     }
@@ -753,7 +782,7 @@ class Node implements Serializable {
      */
     public Node clone() {
         Node n = new Node(value);
-        //Clone the left and right subtrees if they exist
+        //Clone the left, middle, and right subtrees if they exist
         if (left != null) {
             n.left = left.clone();
             n.left.setParent(n);
@@ -761,6 +790,10 @@ class Node implements Serializable {
         if (right != null) {
             n.right = right.clone();
             n.right.setParent(n);
+        }
+        if (middle != null) {
+            n.middle = middle.clone();
+            n.middle.setParent(n);
         }
         return n;
     }
