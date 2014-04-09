@@ -544,6 +544,9 @@ public class Equation implements Serializable {
  * Represents a single node in the expression tree of an equation
  */
 class Node implements Serializable {
+    //The chance of choosing an operator as a random node
+    private static final double OPERATOR_CHANCE = 0.35;
+
     //Represents the value of the node
     private String value;
 
@@ -582,13 +585,19 @@ class Node implements Serializable {
 
         //Create a list of possible leaf values
         ArrayList<String> leaves = new ArrayList<>();
+        //A constant between -2 to 2
         leaves.add(""+Equation.randomRange(-2,2));
+        //The position
         leaves.add("x");
         leaves.add("y");
         leaves.add("z");
+        //The color values
+        leaves.add("r");
+        leaves.add("b");
+        leaves.add("g");
 
         //Determine if the method will return an operator or a constant
-        if (Math.random() < 0.35) {
+        if (Math.random() < OPERATOR_CHANCE) {
             return operators.get((int) (Math.random() * operators.size()));
         }
         else {
