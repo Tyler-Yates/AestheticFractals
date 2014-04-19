@@ -16,7 +16,7 @@ import java.nio.file.Paths;
  */
 public class Fractal implements Serializable {
     //The mathematical Equations that define the structure of the Fractal
-    private Equation x, y, z;
+    private Equation x, y, z, r, g, b;
     //The image representing the visualization of the fractal. This variable is transient to keep it from being
     // Serialized when the program state is saved.
     private transient BufferedImage img;
@@ -46,21 +46,11 @@ public class Fractal implements Serializable {
     private String fileName;
 
     /**
-     * Constructs a new Fractal with randomly generated X and Y Equations
+     * Constructs a new Fractal with randomly generated Equations
      */
     public Fractal() {
         this(Equation.generateRandomXEquation(), Equation.generateRandomYEquation(),
-                Equation.generateRandomZEquation());
-    }
-
-    /**
-     * Constructs a new Fractal with the given X and Y equations
-     *
-     * @param x
-     * @param y
-     */
-    public Fractal(Equation x, Equation y) {
-        this(x, y, Equation.generateRandomZEquation());
+                Equation.generateRandomZEquation(), new Equation("x"), new Equation("y"), new Equation("z"));
     }
 
     /**
@@ -71,9 +61,26 @@ public class Fractal implements Serializable {
      * @param z
      */
     public Fractal(Equation x, Equation y, Equation z) {
+        this(x, y, z, new Equation("x"), new Equation("y"), new Equation("z"));
+    }
+
+    /**
+     * Contructs a new Fractal with the given X, Y, Z, R, G, and B equations
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param r
+     * @param g
+     * @param b
+     */
+    public Fractal(Equation x, Equation y, Equation z, Equation r, Equation g, Equation b) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.r = r;
+        this.g = g;
+        this.b = b;
 
         setIdentification();
     }
@@ -126,6 +133,9 @@ public class Fractal implements Serializable {
             x = newFractal.getX();
             y = newFractal.getY();
             z = newFractal.getZ();
+            r = newFractal.getR();
+            g = newFractal.getG();
+            b = newFractal.getB();
         }
         else if (operation.equals("mutate")) {
             inPlaceMutate();
@@ -136,11 +146,17 @@ public class Fractal implements Serializable {
             x = newFractal.getX();
             y = newFractal.getY();
             z = newFractal.getZ();
+            r = newFractal.getR();
+            g = newFractal.getG();
+            b = newFractal.getB();
         }
         else {
             x = Equation.generateRandomXEquation();
             y = Equation.generateRandomYEquation();
             z = Equation.generateRandomZEquation();
+            r = new Equation("x");
+            g = new Equation("y");
+            b = new Equation("z");
         }
     }
 
@@ -184,11 +200,17 @@ public class Fractal implements Serializable {
         Equation cloneX = x.clone();
         Equation cloneY = y.clone();
         Equation cloneZ = z.clone();
+        Equation cloneR = r.clone();
+        Equation cloneG = g.clone();
+        Equation cloneB = b.clone();
         Equation otherCloneX = f.x.clone();
         Equation otherCloneY = f.y.clone();
         Equation otherCloneZ = f.z.clone();
+        Equation otherCloneR = r.clone();
+        Equation otherCloneG = g.clone();
+        Equation otherCloneB = b.clone();
 
-        //Cross the cloned X and Y Equations
+        //Cross the cloned Equations
         if (GraphicalInterface.selector.xEquation.isSelected()) {
             cloneX.cross(otherCloneX);
         }
@@ -198,9 +220,14 @@ public class Fractal implements Serializable {
         if (GraphicalInterface.selector.zEquation.isSelected()) {
             cloneZ.cross(otherCloneZ);
         }
+        if (GraphicalInterface.selector.colorEquation.isSelected()) {
+            cloneR.cross(otherCloneR);
+            cloneG.cross(otherCloneG);
+            cloneB.cross(otherCloneB);
+        }
 
         //Return a new Fractal defined by the new crossed Equations
-        return new Fractal(cloneX, cloneY, cloneZ);
+        return new Fractal(cloneX, cloneY, cloneZ, cloneR, cloneG, cloneB);
     }
 
     /**
@@ -220,6 +247,9 @@ public class Fractal implements Serializable {
         Equation cloneX = x.clone();
         Equation cloneY = y.clone();
         Equation cloneZ = z.clone();
+        Equation cloneR = r.clone();
+        Equation cloneG = g.clone();
+        Equation cloneB = b.clone();
 
         //Mutate each of the Equations
         if (GraphicalInterface.selector.xEquation.isSelected()) {
@@ -231,9 +261,14 @@ public class Fractal implements Serializable {
         if (GraphicalInterface.selector.zEquation.isSelected()) {
             cloneZ.mutate();
         }
+        if (GraphicalInterface.selector.colorEquation.isSelected()) {
+            cloneR.introduce();
+            cloneG.introduce();
+            cloneB.introduce();
+        }
 
         //Return a new Fractal defined by the mutated Equations
-        return new Fractal(cloneX, cloneY, cloneZ);
+        return new Fractal(cloneX, cloneY, cloneZ, cloneR, cloneG, cloneB);
     }
 
     /**
@@ -250,6 +285,11 @@ public class Fractal implements Serializable {
         if (GraphicalInterface.selector.zEquation.isSelected()) {
             z.mutate();
         }
+        if (GraphicalInterface.selector.colorEquation.isSelected()) {
+            r.mutate();
+            g.mutate();
+            b.mutate();
+        }
     }
 
     /**
@@ -259,7 +299,7 @@ public class Fractal implements Serializable {
      * @return
      */
     public Fractal clone() {
-        return new Fractal(x.clone(), y.clone(), z.clone());
+        return new Fractal(x.clone(), y.clone(), z.clone(), r.clone(), g.clone(), b.clone());
     }
 
     /**
@@ -272,8 +312,11 @@ public class Fractal implements Serializable {
         Equation cloneX = x.clone();
         Equation cloneY = y.clone();
         Equation cloneZ = z.clone();
+        Equation cloneR = r.clone();
+        Equation cloneG = g.clone();
+        Equation cloneB = b.clone();
 
-        //Cross the cloned X and Y Equations
+        //Cross the cloned Equations based on evolutionary selection
         if (GraphicalInterface.selector.xEquation.isSelected()) {
             cloneX.introduce();
         }
@@ -283,9 +326,14 @@ public class Fractal implements Serializable {
         if (GraphicalInterface.selector.zEquation.isSelected()) {
             cloneZ.introduce();
         }
+        if (GraphicalInterface.selector.colorEquation.isSelected()) {
+            cloneR.introduce();
+            cloneG.introduce();
+            cloneB.introduce();
+        }
 
         //Return a new Fractal defined by the new crossed Equations
-        return new Fractal(cloneX, cloneY, cloneZ);
+        return new Fractal(cloneX, cloneY, cloneZ, cloneR, cloneG, cloneB);
     }
 
     /**
@@ -320,7 +368,7 @@ public class Fractal implements Serializable {
                 "-s", "" + image_width, "" + image_height,
                 IMAGE_PATH + id,
                 x.toString(), y.toString(), z.toString(),
-                "x", "y", "z"});
+                r.toString(), g.toString(), b.toString()});
         try {
             Process p = processBuilder.start();
             p.waitFor();
@@ -382,9 +430,9 @@ public class Fractal implements Serializable {
      * @throws IOException
      */
     public void renderInGL() throws IOException {
-        //TODO Add proper R, G, and B equations
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{
-                "C-Genetics/aesthetics", x.toString(), y.toString(), z.toString(), "x", "y", "z"
+                "C-Genetics/aesthetics", x.toString(), y.toString(), z.toString(), r.toString(), g.toString(),
+                b.toString()
         });
         //Tell the FocusListener to stop trying to regain focus
         GraphicalInterface.focusListener.loseFocus();
@@ -457,6 +505,36 @@ public class Fractal implements Serializable {
      */
     public Equation getZ() {
         return z;
+    }
+
+    /**
+     * Returns the R equation of the current Fractal. The returned Equation is not a clone so any changes made to the
+     * returned Equation will affect the current Fractal.
+     *
+     * @return
+     */
+    public Equation getR() {
+        return r;
+    }
+
+    /**
+     * Returns the G equation of the current Fractal. The returned Equation is not a clone so any changes made to the
+     * returned Equation will affect the current Fractal.
+     *
+     * @return
+     */
+    public Equation getG() {
+        return g;
+    }
+
+    /**
+     * Returns the B equation of the current Fractal. The returned Equation is not a clone so any changes made to the
+     * returned Equation will affect the current Fractal.
+     *
+     * @return
+     */
+    public Equation getB() {
+        return b;
     }
 
     /**
