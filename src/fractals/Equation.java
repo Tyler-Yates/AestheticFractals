@@ -227,11 +227,19 @@ public class Equation implements Serializable {
     }
 
     /**
-     * Returns a random Node from the expression tree
+     * Returns a random Node from the expression tree.
+     *
+     * If there is only one Node in the expression tree, that single Node is returned.
+     * Otherwise, every Node in the expression tree except the root Node has an equal chance of being selected.
      *
      * @return
      */
     public Node getRandomNode() {
+        //If there is only one Node in the tree, return it
+        if (nodes.size() == 1) {
+            return nodes.get(0);
+        }
+        //Otherwise, pick a random Node excluding the root Node
         return nodes.get((int) (Math.random() * (nodes.size() - 1) + 1));
     }
 
@@ -252,31 +260,36 @@ public class Equation implements Serializable {
         parentOther = swapOther.getParent();
 
         //Determine if the swap Nodes are the left, middle, or right children of their parents in order to update the
-        // left/middle/right pointers of the parents
-        boolean isLeft, otherIsLeft;
-        isLeft = (swap == parent.getLeft());
-        otherIsLeft = (swapOther == parentOther.getLeft());
-        boolean isMiddle, otherIsMiddle;
-        isMiddle = (swap == parent.getMiddle());
-        otherIsMiddle = (swapOther == parentOther.getMiddle());
-        if (isLeft) {
-            parent.setLeft(swapOther);
-        }
-        else if (isMiddle) {
-            parent.setMiddle(swapOther);
-        }
-        else {
-            parent.setRight(swapOther);
-        }
+        // left/middle/right pointers of the parents. If they do not have parents, this is unnecessary.
+        if (parent != null) {
+            boolean isLeft, isMiddle;
+            isLeft = (swap == parent.getLeft());
+            isMiddle = (swap == parent.getMiddle());
 
-        if (otherIsLeft) {
-            parentOther.setLeft(swap);
+            if (isLeft) {
+                parent.setLeft(swapOther);
+            }
+            else if (isMiddle) {
+                parent.setMiddle(swapOther);
+            }
+            else {
+                parent.setRight(swapOther);
+            }
         }
-        else if (otherIsMiddle) {
-            parentOther.setMiddle(swap);
-        }
-        else {
-            parentOther.setRight(swap);
+        if (parentOther != null) {
+            boolean otherIsLeft, otherIsMiddle;
+            otherIsLeft = (swapOther == parentOther.getLeft());
+            otherIsMiddle = (swapOther == parentOther.getMiddle());
+
+            if (otherIsLeft) {
+                parentOther.setLeft(swap);
+            }
+            else if (otherIsMiddle) {
+                parentOther.setMiddle(swap);
+            }
+            else {
+                parentOther.setRight(swap);
+            }
         }
 
         //Swap the parents of the two swap Nodes
@@ -438,8 +451,6 @@ public class Equation implements Serializable {
         //Update the Equation to reflect the new changes
         trace();
         updateExpression();
-
-        System.out.println(expression);
     }
 
     /**
@@ -586,7 +597,7 @@ class Node implements Serializable {
         //Create a list of possible leaf values
         ArrayList<String> leaves = new ArrayList<>();
         //A constant between -2 to 2
-        leaves.add(""+Equation.randomRange(-2,2));
+        leaves.add("" + Equation.randomRange(-2, 2));
         //The position
         leaves.add("x");
         leaves.add("y");
