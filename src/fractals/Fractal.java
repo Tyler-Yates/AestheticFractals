@@ -43,7 +43,7 @@ public class Fractal implements Serializable {
     //Define the ID for the Fractal
     private String id;
     //Define the path to the image of the Fractal
-    private String fileName;
+    private String fileName, filterFileName;
 
     /**
      * Constructs a new Fractal with randomly generated X and Y Equations
@@ -92,6 +92,7 @@ public class Fractal implements Serializable {
 
         //Use the ID to create the filename for the image
         fileName = IMAGE_PATH + id + ".png";
+        filterFileName = IMAGE_PATH + id + "_filter.png";
     }
 
     /**
@@ -338,9 +339,9 @@ public class Fractal implements Serializable {
      * @return
      */
     public boolean isSparseImage() {
-        File f = new File(fileName);
+        File f = new File(filterFileName);
         //Get the size of the image file in kilobytes
-        double sizeOfImage = f.length() / 1024.0;
+        double sizeOfImage = f.length() / 1200.0;
 
         //If the image size is less than the threshold value, it is sparse
         if (sizeOfImage <= 1.0) {
