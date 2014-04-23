@@ -389,7 +389,7 @@ public class Fractal implements Serializable {
     public boolean isSparseImage() {
         File f = new File(filterFileName);
         //Get the size of the image file in kilobytes
-        double sizeOfImage = f.length() / 1200.0;
+        double sizeOfImage = f.length() / 1024.0;
 
         //If the image size is less than the threshold value, it is sparse
         if (sizeOfImage <= 1.0) {
