@@ -1,5 +1,7 @@
 language: java
 before_install:
+    - sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev libglew-dev libpng-dev
+    - sudo ./configure
     - cd C-Genetics
     - make clean
     - make
