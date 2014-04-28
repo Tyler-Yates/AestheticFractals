@@ -344,12 +344,19 @@ public class Fractal implements Serializable {
      * @throws InterruptedException
      */
     public void generateImage() {
-        //Get the dimensions of the screen in order to determine how large to render the image
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int image_width, image_height;
+        try {
+            //Get the dimensions of the screen in order to determine how large to render the image
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        //Define the width and height of the image
-        int image_width = (int) (screenSize.getWidth() / 3);
-        int image_height = (int) (screenSize.getHeight() / 3);
+            //Define the width and height of the image
+            image_width = (int) (screenSize.getWidth() / 3);
+            image_height = (int) (screenSize.getHeight() / 3);
+        } catch (Exception e) {
+            //If there was an error getting the screen size, set default width and height values
+            image_width = 1920;
+            image_height = 1080;
+        }
 
         /*
         For reasons as yet unknown, the Java PNG reader freaks out when it tries to read PNG files whose dimensions
