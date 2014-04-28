@@ -1,10 +1,9 @@
 language: java
 before_install:
     - sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev libglew-dev libpng-dev
-    - cd C-Genetics/libs/AntTweakBar/src
-    - make clean
-    - make
-    - cd ../../..
-    - make clean
-    - make
-    - cd
+    - make clean -C C-Genetics/libs/AntTweakBar/src
+    - make -C C-Genetics/libs/AntTweakBar/src
+    - make clean -C C-Genetics
+    - make -C C-Genetics
+
+script: ant test
