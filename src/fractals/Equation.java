@@ -361,10 +361,10 @@ public class Equation implements Serializable {
             return current + "(" + updateExpression(current.getRight()) + ")";
         }
         //Ternary operators are in the form:
-        // if (expA) ( expB ) ( expC )
+        // if ((expA)(expB)(expC))
         else if (current.isTernaryOperator()) {
-            return current + "(" + updateExpression(current.getMiddle()) + ")" + "(" + updateExpression(current
-                    .getLeft()) + ")(" + updateExpression(current.getRight()) + ")";
+            return current + "((" + updateExpression(current.getMiddle()) + ")" + "(" + updateExpression(current
+                    .getLeft()) + ")(" + updateExpression(current.getRight()) + "))";
         }
         else {
             //Binary operators, constants, and variables are in the form ... abc ...
