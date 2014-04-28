@@ -382,7 +382,9 @@ public class Fractal implements Serializable {
     }
 
     /**
-     * Returns whether or not the generated image is 'sparse' and thus aesthetically unpleasing
+     * Returns whether or not the generated image is 'sparse' and thus aesthetically unpleasing.
+     *
+     * This method REQUIRES that generateImage() already be called.
      *
      * @return
      */

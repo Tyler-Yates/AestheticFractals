@@ -7,3 +7,4 @@ before_install:
     - cd ../../..
     - make clean
     - make
+    - cd
