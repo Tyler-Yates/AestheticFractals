@@ -51,7 +51,7 @@ public class Equation implements Serializable {
         try {
             //Turn the infix expression into a postfix expression using the EXP4J library
             Calculable calc = new ExpressionBuilder(expression)
-                    .withVariableNames("x", "y", "z").build();
+                    .withVariableNames("x", "y", "z", "r", "g", "b").build();
             String postfixExpression = calc.getExpression();
 
             //Get an array of the individual components of the postfix expression
