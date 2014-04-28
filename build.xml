@@ -2,9 +2,10 @@
     <property name="src" location="src"/>
     <property name="out" location="out"/>
     <property name="test" location="test"/>
+    <property name="lib" location="libs"/>
 
     <path id="classpath">
-        <fileset dir="libs"/>
+        <fileset dir="${lib}"/>
     </path>
 
     <target name="init">
@@ -25,11 +26,11 @@
             description="generate the distribution">
         <junit printsummary="yes" fork="yes" haltonerror="yes" haltonfailure="yes">
             <classpath>
-                <fileset dir="libs"/>
+                <fileset dir="${lib}"/>
                 <pathelement location="${out}"/>
             </classpath>
 
-            <formatter type="plain"/>
+            <formatter type="plain" usefile="false"/>
 
             <batchtest todir="${out}">
                 <fileset dir="${test}">
