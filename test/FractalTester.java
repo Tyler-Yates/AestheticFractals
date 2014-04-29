@@ -1,5 +1,4 @@
 import fractals.Equation;
-import fractals.Fractal;
 import junit.framework.TestCase;
 
 public class FractalTester extends TestCase {
@@ -14,15 +13,16 @@ public class FractalTester extends TestCase {
         sparseY = new Equation("1");
     }
 
-    public void testNonSparse() {
-        Fractal nonSparseFractal = new Fractal(nonsparseX, nonsparseY, new Equation("1"));
-        nonSparseFractal.generateImage();
-        assertEquals(false, nonSparseFractal.isSparseImage());
-    }
-
-    public void testSparse() {
-        Fractal nonSparseFractal = new Fractal(sparseX, sparseY, new Equation("1"));
-        nonSparseFractal.generateImage();
-        assertEquals(true, nonSparseFractal.isSparseImage());
+    public void testRandomRange() {
+        double start = -2.0;
+        double end = 2.0;
+        //Get a lot of random numbers for data points
+        int i = 100;
+        boolean correct = true;
+        while (i-- > 0) {
+            double rand = Equation.randomRange(start, end);
+            correct &= start <= rand && rand < end;
+        }
+        assertTrue(correct);
     }
 }
