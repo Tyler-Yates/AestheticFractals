@@ -1,9 +1,6 @@
 package fractals;
 
-import de.congrace.exp4j.Calculable;
-import de.congrace.exp4j.ExpressionBuilder;
-import de.congrace.exp4j.UnknownFunctionException;
-import de.congrace.exp4j.UnparsableExpressionException;
+import de.congrace.exp4j.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,9 +46,21 @@ public class Equation implements Serializable {
         this.expression = expression;
 
         try {
+            //Conditional function
+            CustomFunction conditionalFunction = new CustomFunction("if", 3) {
+                public double applyFunction(double[] values) {
+                    if (values[0] >= 0) {
+                        return values[1];
+                    }
+                    else {
+                        return values[2];
+                    }
+                }
+            };
+
             //Turn the infix expression into a postfix expression using the EXP4J library
             Calculable calc = new ExpressionBuilder(expression)
-                    .withVariableNames("x", "y", "z", "r", "g", "b").build();
+                    .withVariableNames("x", "y", "z", "r", "g", "b").withCustomFunction(conditionalFunction).build();
             String postfixExpression = calc.getExpression();
 
             //Get an array of the individual components of the postfix expression
@@ -131,7 +140,7 @@ public class Equation implements Serializable {
 
             //Create a list of all Nodes in the expression tree
             trace();
-        } catch (UnknownFunctionException | UnparsableExpressionException e) {
+        } catch (UnparsableExpressionException | InvalidCustomFunctionException | UnknownFunctionException e) {
             e.printStackTrace();
         }
     }
