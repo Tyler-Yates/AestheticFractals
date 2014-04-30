@@ -444,16 +444,11 @@ public class Fractal implements Serializable {
                 "C-Genetics/aesthetics", x.toString(), y.toString(), z.toString(), r.toString(), g.toString(),
                 b.toString()
         });
-        //Tell the FocusListener to stop trying to regain focus
-        GraphicalInterface.focusListener.loseFocus();
         Process p = processBuilder.start();
         try {
             p.waitFor();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            //Now that the render window has closed, allow the FocusListener to regain focus
-            GraphicalInterface.focusListener.regainFocus();
         }
     }
 

@@ -73,7 +73,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(windowWidth, windowHeight);
         frame.addMouseMotionListener(this);
-        frame.addWindowFocusListener(focusListener);
         frame.addMouseListener(this);
         frame.addKeyListener(this);
         frame.add(this);
@@ -89,7 +88,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         selector = new EvolutionSelector(windowWidth, 0);
 
         //Initialize the JFrame window
-        focusListener = new FocusListener();
         new GraphicalInterface();
     }
 

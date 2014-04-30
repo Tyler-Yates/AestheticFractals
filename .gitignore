@@ -12,3 +12,5 @@ out/
 *.iml
 *.project
 *.ser
+cov-int/*
+*.tgz
