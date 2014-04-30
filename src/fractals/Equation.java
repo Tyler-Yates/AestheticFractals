@@ -57,10 +57,21 @@ public class Equation implements Serializable {
                     }
                 }
             };
+            //Boolean operator
+            CustomOperator greaterThan = new CustomOperator(">", true, 10, 2) {
+                @Override
+                public double applyOperation(double[] values) {
+                    if (values[0] > values[1]) {
+                        return 1.0;
+                    }
+                    return 0.0;
+                }
+            };
 
             //Turn the infix expression into a postfix expression using the EXP4J library
             Calculable calc = new ExpressionBuilder(expression)
-                    .withVariableNames("x", "y", "z", "r", "g", "b").withCustomFunction(conditionalFunction).build();
+                    .withVariableNames("x", "y", "z", "r", "g", "b").withOperation(greaterThan).withCustomFunction
+                            (conditionalFunction).build();
             String postfixExpression = calc.getExpression();
 
             //Get an array of the individual components of the postfix expression
@@ -372,7 +383,7 @@ public class Equation implements Serializable {
         //Ternary operators are in the form:
         // if ((expA)(expB)(expC))
         else if (current.isTernaryOperator()) {
-            return current + "((" + updateExpression(current.getMiddle()) + ")" + "(" + updateExpression(current
+            return current + "((" + updateExpression(current.getMiddle()) + " > 0)" + "(" + updateExpression(current
                     .getLeft()) + ")(" + updateExpression(current.getRight()) + "))";
         }
         else {
