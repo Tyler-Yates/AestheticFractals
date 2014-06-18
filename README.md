@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Tyler-Yates/AestheticFractals.svg?branch=master)](https://travis-ci.org/Tyler-Yates/AestheticFractals) 
 [![Ze Version][ZE img]][Ze Version]
 Aesthetic Fractals
 =================
