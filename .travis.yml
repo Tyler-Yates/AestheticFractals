@@ -6,4 +6,4 @@ before_install:
     - make clean -C C-Genetics
     - make -C C-Genetics
 
-script: ant test
+script: mvn test
