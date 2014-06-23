@@ -143,12 +143,6 @@ public class Equation implements Serializable {
             //The root of the expression tree is the last Node on the stack after all components have been examined
             root = stack.pop();
 
-            /*
-            System.out.print("Creating new equation: ");
-            printTree(root);
-            System.out.println();
-            */
-
             //Create a list of all Nodes in the expression tree
             trace();
         } catch (UnparsableExpressionException | InvalidCustomFunctionException | UnknownFunctionException e) {
@@ -403,11 +397,8 @@ public class Equation implements Serializable {
             return;
         }
 
-        System.out.print(current + " # ");
         printTree(current.getMiddle());
-        System.out.print(" # ");
         printTree(current.getLeft());
-        System.out.print(" # ");
         printTree(current.getRight());
     }
 
