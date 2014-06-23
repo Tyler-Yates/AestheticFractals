@@ -22,9 +22,8 @@
         <javac includeantruntime="false" srcdir="${test}" destdir="${out}" classpathref="classpath"/>
     </target>
 
-    <target name="test" depends="compile"
-            description="generate the distribution">
-        <junit printsummary="yes" fork="yes" haltonerror="yes" haltonfailure="yes">
+    <target name="test" depends="compile">
+        <junit printsummary="yes" fork="yes" haltonerror="yes" haltonfailure="no">
             <classpath>
                 <fileset dir="${lib}"/>
                 <pathelement location="${out}"/>
