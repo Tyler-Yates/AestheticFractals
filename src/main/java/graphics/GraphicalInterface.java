@@ -5,21 +5,38 @@ import fractals.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 /**
  * Opens JFrame with nine boxes.
  */
-public class GraphicalInterface extends JPanel implements MouseMotionListener, MouseListener, KeyListener, ActionListener {
+public class GraphicalInterface extends JPanel implements MouseMotionListener, MouseListener,
+        KeyListener, ActionListener {
     private static final long serialVersionUID = 749344840243728058L;
 
     //The window
     public static JFrame frame;
 
     /*
-    Generator controls the generation of new Fractals. It is an instantiation because we need to save
-    this Object to a file through Serialization in order to save the state of the program.
+    Generator controls the generation of new Fractals. It is an instantiation because we need to
+    save this Object to a file through Serialization in order to save the state of the program.
      */
     public static Generator generator;
 
@@ -154,7 +171,8 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener, M
         g.fillRect(0, getFractalWindowHeight() + 1, frame.getWidth(), SELECTOR_HEIGHT);
         g.setColor(Color.white);
         //Draw the generation information
-        g.drawString("Generation: " + generator.getGeneration() + "/" + generator.getTotalGenerations(), 15, getFractalWindowHeight() + 15);
+        g.drawString("Generation: " + generator.getGeneration() + "/" + generator
+                .getTotalGenerations(), 15, getFractalWindowHeight() + 15);
     }
 
     /**
