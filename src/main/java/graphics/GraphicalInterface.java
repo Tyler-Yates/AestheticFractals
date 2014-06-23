@@ -11,8 +11,7 @@ import java.io.*;
 /**
  * Opens JFrame with nine boxes.
  */
-public class GraphicalInterface extends JPanel implements MouseMotionListener,
-        MouseListener, KeyListener, ActionListener {
+public class GraphicalInterface extends JPanel implements MouseMotionListener, MouseListener, KeyListener, ActionListener {
     private static final long serialVersionUID = 749344840243728058L;
 
     //The window
@@ -39,18 +38,18 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     static int mouseX, mouseY; // Mouse location on the screen
 
     //Program version
-    private static final double VERSION = 0.9;
+    private static final double VERSION = 1.0;
 
     private static int selectedBoxX, selectedBoxY, menuOpenForFractalNum;
 
     //Background and Foreground colors
-    private static Color bgColor = Color.black;
-    private static Color fgColor = Color.white;
+    private static final Color bgColor = Color.black;
+    private static final Color fgColor = Color.white;
 
     //Color of the selected fractals
-    private static Color selectedColor = new Color(255, 255, 255, 35);
+    private static final Color selectedColor = new Color(255, 255, 255, 35);
     //Color of the boxes where the mouse is hovering over
-    private static Color hoverColor = new Color(255, 255, 255, 35);
+    private static final Color hoverColor = new Color(255, 255, 255, 35);
 
     //True if the user is in full-screen mode. This is toggled using the 'f' key
     private static boolean fullScreen = false;
@@ -62,15 +61,13 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     public static final int SELECTOR_HEIGHT = 100;
     public static EvolutionSelector selector;
 
-    public static FocusListener focusListener;
-
     /**
      * Initializes the JFrame
      */
     public GraphicalInterface() {
         frame = new JFrame("Aesthetic Fractal v" + VERSION);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(windowWidth, windowHeight);
         frame.addMouseMotionListener(this);
         frame.addMouseListener(this);
@@ -78,8 +75,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         frame.add(this);
     }
 
-    public static void main(String args[]) throws IOException,
-            InterruptedException {
+    public static void main(String args[]) throws IOException, InterruptedException {
         //Generate the first generation
         generator = new Generator();
         generator.generateNewGeneration();
@@ -94,7 +90,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Returns the total height of the area where the 3x3 grid of fractals are drawn.
      *
-     * @return
+     * @return the height in pixels
      */
     public static int getFractalWindowHeight() {
         return frame.getHeight() - SELECTOR_HEIGHT;
@@ -106,8 +102,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     public static void toggleFullScreen() {
         if (fullScreen) {
             frame.setExtendedState(Frame.NORMAL);
-        }
-        else {
+        } else {
             frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
         }
 
@@ -117,7 +112,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Draw the 9 fractal boxes on the window
      *
-     * @param g
+     * @param g the graphics object to draw on
      */
     public void drawInterface(Graphics g) {
         //Fill the window with the background color
@@ -125,13 +120,13 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
         g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
         //Define how big each box is by looking at the current window size
-        int boxWidth = frame.getWidth() / 3;
-        int boxHeight = getFractalWindowHeight() / 3;
+        final int boxWidth = frame.getWidth() / 3;
+        final int boxHeight = getFractalWindowHeight() / 3;
 
         //Draw each of the 9 boxes
         for (int i = 0; i < 9; i++) {
-            int x = i % 3 * boxWidth;
-            int y = i / 3 * boxHeight;
+            final int x = i % 3 * boxWidth;
+            final int y = i / 3 * boxHeight;
 
             g.setColor(fgColor);
             //Draw the fractal
@@ -152,28 +147,27 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Draw the selector bar at the bottom of the window
      *
-     * @param g
+     * @param g the graphics object to draw on
      */
     private void drawSelectorBar(Graphics g) {
         g.setColor(Color.black);
         g.fillRect(0, getFractalWindowHeight() + 1, frame.getWidth(), SELECTOR_HEIGHT);
         g.setColor(Color.white);
         //Draw the generation information
-        g.drawString("Generation: " + generator.getGeneration() + "/" + generator.getTotalGenerations(), 15,
-                getFractalWindowHeight() + 15);
+        g.drawString("Generation: " + generator.getGeneration() + "/" + generator.getTotalGenerations(), 15, getFractalWindowHeight() + 15);
     }
 
     /**
      * Highlight the boxes the user has selected
      *
-     * @param g
+     * @param g the graphics object to draw on
      */
     private void drawSelectedBoxes(Graphics g) {
         g.setColor(selectedColor);
         //Loop through all 9 boxes
         for (int i = 0; i < selectedFractals.length; i++) {
-            int x = i % 3 * frame.getWidth() / 3;
-            int y = i / 3 * getFractalWindowHeight() / 3;
+            final int x = i % 3 * frame.getWidth() / 3;
+            final int y = i / 3 * getFractalWindowHeight() / 3;
 
             //Only highlight the boxes that have been selected
             if (selectedFractals[i]) {
@@ -185,12 +179,11 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Draw the box to allow users to render a fractal
      *
-     * @param e
-     * @param boxIndex
+     * @param e the mouse event
      */
-    private void drawPopupForFractal(MouseEvent e, int boxIndex) {
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem renderItem = new JMenuItem("Render fractal");
+    private void drawPopupForFractal(MouseEvent e) {
+        final JPopupMenu menu = new JPopupMenu();
+        final JMenuItem renderItem = new JMenuItem("Render fractal");
         renderItem.addActionListener(this);
         menu.add(renderItem);
         //Draw the menu where the mouse was at time of click
@@ -201,11 +194,11 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
      * Draws a box with the foreground color at position (x,y) with
      * the specified width and height
      *
-     * @param g
-     * @param x
-     * @param y
-     * @param width
-     * @param height
+     * @param g      the graphics object to draw on
+     * @param x      the x location of the upper-left corner of the box in pixels
+     * @param y      the y location of the upper-left corner of the box in pixels
+     * @param width  the width of the box
+     * @param height the height of the box
      */
     public void drawBox(Graphics g, int x, int y, int width, int height) {
         g.setColor(fgColor);
@@ -215,10 +208,10 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Draw the fractal represented by the given index at position (x,y)
      *
-     * @param g
-     * @param index
-     * @param x
-     * @param y
+     * @param g     the graphics object to draw on
+     * @param index the index of the fractal
+     * @param x     the x location of the upper-left corner of the image in pixels
+     * @param y     the y location of the upper-left corner of the image in pixels
      */
     public void drawImage(Graphics g, int index, int x, int y) {
         generator.drawImage(index, g, x, y);
@@ -227,22 +220,21 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Highlight the box that the mouse is hovering over
      *
-     * @param g
+     * @param g the graphics object to draw on
      */
     public void drawSelectedBox(Graphics g) {
         //Use the mouse to determine which box is highlighted
-        int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
-        int t = mouseY / (getFractalWindowHeight() / 3) * (getFractalWindowHeight() / 3);
+        final int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
+        final int t = mouseY / (getFractalWindowHeight() / 3) * (getFractalWindowHeight() / 3);
 
         g.setColor(hoverColor);
-        g.fillRect(l + 1, t + 1, frame.getWidth() / 3 - 2,
-                getFractalWindowHeight() / 3 - 2);
+        g.fillRect(l + 1, t + 1, frame.getWidth() / 3 - 2, getFractalWindowHeight() / 3 - 2);
     }
 
     /**
      * Draw the interface
      *
-     * @param g
+     * @param g the graphics object to draw on
      */
     public void paint(Graphics g) {
         drawInterface(g);
@@ -253,56 +245,46 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
     }
 
-    /**
-     * Triggered when the mouse moves on the window
-     *
-     * @param e
-     */
     @Override
     public void mouseMoved(MouseEvent e) {
         //Get the mouse's position
-        int x = e.getX();
-        int y = e.getY();
+        final int x = e.getX();
+        final int y = e.getY();
 
         //Take into account the top and side bars of the window
         mouseX = x - frame.getInsets().left;
         mouseY = y - frame.getInsets().top;
 
-        int l = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
-        int t = mouseY / (getFractalWindowHeight() / 3) * (getFractalWindowHeight() / 3);
+        final int boxX = mouseX / (frame.getWidth() / 3) * (frame.getWidth() / 3);
+        final int boxY = mouseY / (getFractalWindowHeight() / 3) * (getFractalWindowHeight() / 3);
 
         //Repaint the screen if the hover box changes
-        if (l != selectedBoxX | t != selectedBoxY) {
-            selectedBoxX = l;
-            selectedBoxY = t;
+        if (boxX != selectedBoxX | boxY != selectedBoxY) {
+            selectedBoxX = boxX;
+            selectedBoxY = boxY;
             repaint();
         }
     }
 
-    /**
-     * Triggered when the mouse is clicked in the window
-     *
-     * @param e
-     */
     @Override
     public void mouseClicked(MouseEvent e) {
         //Get the mouse's position
-        int x = e.getX();
-        int y = e.getY();
+        final int x = e.getX();
+        final int y = e.getY();
 
         //Take into account the top and side bars of the window
         mouseX = x - frame.getInsets().left;
         mouseY = y - frame.getInsets().top;
 
-        int boxCol = mouseX / (frame.getWidth() / 3);
-        int boxRow = mouseY / (getFractalWindowHeight() / 3);
+        final int boxCol = mouseX / (frame.getWidth() / 3);
+        final int boxRow = mouseY / (getFractalWindowHeight() / 3);
 
         //Calculate the index of the box
-        int boxIndex = (boxRow * 3) + boxCol;
+        final int boxIndex = (boxRow * 3) + boxCol;
 
         //If the click is a right-mouse button click, bring up the render box
         if (SwingUtilities.isRightMouseButton(e)) {
-            drawPopupForFractal(e, boxIndex);
+            drawPopupForFractal(e);
             menuOpenForFractalNum = boxIndex;
         }
         //Otherwise, toggle the selection of the box
@@ -338,11 +320,6 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
 
     }
 
-    /**
-     * Triggered when the user presses a key
-     *
-     * @param e
-     */
     @Override
     public void keyReleased(KeyEvent e) {
         //Space bar generates a new generation
@@ -380,14 +357,14 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     private void save() {
         System.out.print("Saving...");
         //Open a dialog for the user to pick the file to save to
-        String fileName = FileChooser.showSaveDialog(EXTENSION);
+        final String fileName = FileChooser.showSaveDialog(EXTENSION);
         if (fileName == null) {
             return;
         }
         try (
-                OutputStream file = new FileOutputStream(fileName);
-                OutputStream buffer = new BufferedOutputStream(file);
-                ObjectOutput output = new ObjectOutputStream(buffer);
+                final OutputStream file = new FileOutputStream(fileName);
+                final OutputStream buffer = new BufferedOutputStream(file);
+                final ObjectOutput output = new ObjectOutputStream(buffer)
         ) {
             //Stop the current Threads as we are discarding the current program state
             ImageManager.interruptThreads();
@@ -405,23 +382,21 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     private void load() {
         System.out.print("Loading...");
         //Open a dialog for the user to pick the file to load from
-        String fileName = FileChooser.showLoadDialog(EXTENSION);
+        final String fileName = FileChooser.showLoadDialog(EXTENSION);
         if (fileName == null) {
             return;
         }
         try (
-                InputStream file = new FileInputStream(fileName);
-                InputStream buffer = new BufferedInputStream(file);
-                ObjectInput input = new ObjectInputStream(buffer);
+                final InputStream file = new FileInputStream(fileName);
+                final InputStream buffer = new BufferedInputStream(file);
+                final ObjectInput input = new ObjectInputStream(buffer)
         ) {
             //Stop the current Threads as we are discarding the current program state
             ImageManager.interruptThreads();
             generator = (Generator) input.readObject();
             System.out.println("Done!");
             repaint();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -434,7 +409,7 @@ public class GraphicalInterface extends JPanel implements MouseMotionListener,
     /**
      * Render the fractal if the user presses the menu button
      *
-     * @param e
+     * @param e the ActionEvent
      */
     @Override
     public void actionPerformed(ActionEvent e) {
