@@ -37,6 +37,73 @@
 <p>The Java Evolutionary UI to pair with <a href="https://github.com/kyeah/Genetic-Fractals">Genetic Fractals</a>.</p>
 
 <p>Created by <a href="https://github.com/kyeah">Kevin Yeh</a> and <a href="https://github.com/Tyler-Yates">Tyler Yates</a> - 2013 (UT Freshman Research Initiative: Computational Intelligence)</p>
+
+<h2>Introduction</h2>
+
+<p>Fractals are defined as “a curve or geometric figure, each part of which has the same statistical character as the
+    whole." They have been researched extensively, due in large part to the complex results that can arise from
+    iterating
+    over simple processes many times, and fractals have been found to model a wide range of natural phenomena. Each
+    fractal
+    family is defined by a basic mathematical structure, from which variations are created by altering the coefficients
+    of
+    the basic equation. Because these coefficients can be represented by floating point numbers, determining a genome
+    for
+    the fractals is potentially simple and can lead to computationally light mutations, through slight alteration of the
+    coefficients, and crossovers, through an averaging of the parent’s coefficients. It is also possible to expand upon
+    the
+    process of generating offspring fractals by taking outside factors into account, and entire families can be
+    generated
+    programmatically through evolution of the equations themselves, creating potentially complex fractal patterns tended
+    towards certain desirable features.</p>
+
+<h2>The Program</h2>
+    The Aesthetic Fractals Program allows users to evolve fractals to their liking using genetic programming. The
+    program
+    runs on Linux and uses the OpenGL framework for its graphics.
+
+    <p></p>
+
+    <h2>How to Git It</h2>
+    The program is hosted on Github <p></p>
+    Clone the project onto your machine:
+    <div class="code">
+        git clone https://github.com/Tyler-Yates/AestheticFractals.git<br>
+        cd AestheticFractals
+    </div>
+    <p></p>
+    Install the necessary dependencies:
+    <div class="code">sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev libglew-dev libpng-dev g++</div>
+    <p></p>
+    Build the dependencies:
+    <div class="code">
+	git submodule init<br>
+	git submodule update<br>
+        make -C C-Genetics/libs/AntTweakBar/src<br>
+        make -C C-Genetics
+    </div>
+    <p></p>
+    Compile the program:
+    <div class="code">
+        mkdir output<br>
+        javac -d output -cp libs/exp4j-0.3.10.jar src/fractals/*.java src/graphics/*.java<br>
+    </div>
+    <p></p>
+    Run the program:
+    <div class="code">
+        java -cp "libs/exp4j-0.3.10.jar;output/*" graphics.GraphicalInterface
+    </div>
+    <h2>Instructions</h2>
+    Left-click on a fractal's box in the window to select that fractal as a parent for the next generation. Press space
+    when you have
+    finished picking parents to generate the next generation. Press left and right to go through the history of the
+    generated fractals. Right-click on a fractal to render it.
+
+<h2>Samples</h2>
+    <iframe width="100%" height="480"
+            src="http://s1320.photobucket.com/user/terminex9/embed/slideshow/AestheticFractals"></iframe>
+    <p></p>
+
       </section>
     </div>
 
