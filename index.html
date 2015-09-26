@@ -85,13 +85,12 @@
     <p></p>
     Compile the program:
     <div class="code">
-        mkdir output<br>
-        javac -d output -cp libs/exp4j-0.3.10.jar src/fractals/*.java src/graphics/*.java<br>
+        mvn install
     </div>
     <p></p>
     Run the program:
     <div class="code">
-        java -cp "libs/exp4j-0.3.10.jar;output/*" graphics.GraphicalInterface
+        mvn exec:java
     </div>
     <h2>Instructions</h2>
     Left-click on a fractal's box in the window to select that fractal as a parent for the next generation. Press space
