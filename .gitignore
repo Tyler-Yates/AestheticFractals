@@ -14,3 +14,4 @@ out/
 *.ser
 cov-int/*
 *.tgz
+/target/
